@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_mobiletest2/color.dart';
+import 'package:flutter_application_mobiletest2/screen/widget/drawer_student.dart';
 
-// ความกว้างของแท็บบาร์และภายในแท็บ
-final double appBarWidth = kToolbarHeight;
+final double appBarHeight = kToolbarHeight;
+final double imageHeight = appBarHeight * 1;
 
 var kMyAppBar = AppBar(
   title: Image.asset(
     'images/mju_logo_main-resize.png',
-    height: appBarWidth, // ตั้งความสูงของรูปเท่ากับความสูงของแท็บบาร์
+    height: imageHeight,
   ),
-  toolbarHeight: appBarWidth,
-  backgroundColor: Colors.white,
+  toolbarHeight: appBarHeight,
+  iconTheme: IconThemeData(color: maincolor),
+  backgroundColor: Color.fromARGB(255, 255, 255, 255),
   elevation: 10,
 );

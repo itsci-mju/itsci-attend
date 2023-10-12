@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_application_mobiletest2/color.dart';
+import 'package:flutter_application_mobiletest2/controller/user_controller.dart';
+import 'package:flutter_application_mobiletest2/model/user.dart';
 import 'package:flutter_application_mobiletest2/screen/student/scan_screen.dart';
+import 'package:flutter_application_mobiletest2/screen/widget/drawer_student.dart';
 import 'package:flutter_application_mobiletest2/screen/widget/my_abb_bar.dart';
 import 'package:flutter_application_mobiletest2/screen/widget/navbar_student.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class homeScreenForStudent extends StatefulWidget {
   const homeScreenForStudent({super.key});
@@ -14,11 +18,44 @@ class homeScreenForStudent extends StatefulWidget {
 }
 
 class _homeScreenForStudentState extends State<homeScreenForStudent> {
+  final UserController userController = UserController();
+  List<Map<String, dynamic>> data = [];
+  bool? isLoaded = false;
+  String? IdUser;
+  String? userID;
+
+  void fetchData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? username = prefs.getString('username');
+
+    //print(username);
+    if (username != null) {
+      User? user = await userController.get_UserByUsername(username);
+      print(user?.id);
+      if (user != null) {
+        IdUser = user.id.toString();
+        userID = user.userid.toString();
+        setState(() {
+          isLoaded = true;
+        });
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
   @override
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
     final double screenHeight = screenSize.height;
     final double screenWidth = screenSize.width;
+    double pageWidth = MediaQuery.of(context).size.width;
+
+    final scaffoldKey = GlobalKey<ScaffoldState>();
 
     double formHeight;
     double formWidth;
@@ -32,13 +69,14 @@ class _homeScreenForStudentState extends State<homeScreenForStudent> {
     }
 
     return Scaffold(
+      key: scaffoldKey,
       appBar: kMyAppBar,
-      backgroundColor: Colors.white,
+      backgroundColor: Color.fromARGB(255, 255, 255, 255),
+      endDrawer: const DrawerStudentWidget(),
       body: ListView(
         children: [
           Column(
             children: [
-              //NavbarStudent(),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               ),

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_mobiletest2/controller/user_controller.dart';
 import 'package:flutter_application_mobiletest2/screen/student/home_screen.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
