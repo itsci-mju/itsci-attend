@@ -4,10 +4,11 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_application_mobiletest2/color.dart';
 import 'package:flutter_application_mobiletest2/controller/user_controller.dart';
 import 'package:flutter_application_mobiletest2/model/user.dart';
+import 'package:flutter_application_mobiletest2/screen/student/list_subject.dart';
 import 'package:flutter_application_mobiletest2/screen/student/scan_screen.dart';
 import 'package:flutter_application_mobiletest2/screen/widget/drawer_student.dart';
 import 'package:flutter_application_mobiletest2/screen/widget/my_abb_bar.dart';
-import 'package:flutter_application_mobiletest2/screen/widget/navbar_student.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 class homeScreenForStudent extends StatefulWidget {
@@ -71,13 +72,13 @@ class _homeScreenForStudentState extends State<homeScreenForStudent> {
     return Scaffold(
       key: scaffoldKey,
       appBar: kMyAppBar,
-      backgroundColor: Color.fromARGB(255, 255, 255, 255),
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       endDrawer: const DrawerStudentWidget(),
       body: ListView(
         children: [
           Column(
             children: [
-              Padding(
+              const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               ),
               Container(
@@ -116,10 +117,10 @@ class _homeScreenForStudentState extends State<homeScreenForStudent> {
                                     'images/qr-code.png',
                                   ),
                                 ),
-                                Padding(
+                                const Padding(
                                   padding: EdgeInsets.symmetric(vertical: 5),
                                 ),
-                                FractionallySizedBox(
+                                const FractionallySizedBox(
                                   widthFactor: 1,
                                   child: Center(
                                     child: Text(
@@ -140,7 +141,7 @@ class _homeScreenForStudentState extends State<homeScreenForStudent> {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Container(
@@ -153,15 +154,10 @@ class _homeScreenForStudentState extends State<homeScreenForStudent> {
                   color: maincolor,
                   child: InkWell(
                     onTap: () {
-                      // ทำการนำไปยังหน้าอื่น ในกรณีนี้คุณสามารถใช้ pushReplacement หรือ push ไปยังหน้าที่คุณต้องการ
-                      /*Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (BuildContext context) {
-                            // ตรงนี้คุณสามารถกำหนดหน้าที่คุณต้องการแสดงหรือนำไปยังหน้าอื่น
-                            return const scanScreenForStudent();
-                          },
-                        ),
-                      );*/
+                      Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (BuildContext context) {
+                        return const ListSubjectStudentScreen();
+                      }));
                     },
                     child: FractionallySizedBox(
                       widthFactor: 1.0, // ให้เท่ากับความกว้างของ Container
@@ -179,10 +175,10 @@ class _homeScreenForStudentState extends State<homeScreenForStudent> {
                                     'images/immigration.png',
                                   ),
                                 ),
-                                Padding(
+                                const Padding(
                                   padding: EdgeInsets.symmetric(vertical: 5),
                                 ),
-                                FractionallySizedBox(
+                                const FractionallySizedBox(
                                   widthFactor: 1,
                                   child: Center(
                                     child: Text(

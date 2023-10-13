@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_mobiletest2/color.dart';
 import 'package:flutter_application_mobiletest2/screen/login.dart';
 import 'package:flutter_application_mobiletest2/screen/student/home_screen.dart';
+import 'package:flutter_application_mobiletest2/screen/student/list_subject.dart';
+import 'package:flutter_application_mobiletest2/screen/student/scan_screen.dart';
 
 void main() => runApp(const MyApp());
 
@@ -19,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: maincolor,
       ),
-      home: homeScreenForStudent(),
+      home: const homeScreenForStudent(),
       //home: LoginScreen(),
     );
   }

@@ -5,7 +5,7 @@ import 'package:flutter_application_mobiletest2/color.dart';
 import 'package:flutter_application_mobiletest2/controller/login_controller.dart';
 import 'package:flutter_application_mobiletest2/controller/user_controller.dart';
 import 'package:flutter_application_mobiletest2/model/login.dart';
-import 'package:flutter_application_mobiletest2/screen/student/view_student_subject.dart';
+import 'package:flutter_application_mobiletest2/screen/student/home_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:quickalert/quickalert.dart';
@@ -215,7 +215,7 @@ class _loginScreenState extends State<LoginScreen> {
                                   Navigator.of(context).pushReplacement(
                                       MaterialPageRoute(
                                           builder: (BuildContext context) {
-                                    return const ViewStudentSubject();
+                                    return const homeScreenForStudent();
                                   }));
                                 } else if (roleName == "Teacher") {
                                   /*Navigator.of(context).pushReplacement(

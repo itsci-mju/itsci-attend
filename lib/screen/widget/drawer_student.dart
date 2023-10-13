@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_application_mobiletest2/color.dart';
 import 'package:flutter_application_mobiletest2/screen/login.dart';
 import 'package:flutter_application_mobiletest2/screen/student/home_screen.dart';
+import 'package:flutter_application_mobiletest2/screen/student/list_subject.dart';
 import 'package:flutter_application_mobiletest2/screen/student/scan_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -69,10 +70,10 @@ class DrawerStudentWidget extends StatelessWidget {
               title:
                   const Text('รายวิชา', style: TextStyle(color: Colors.white)),
               onTap: () {
-                /*Navigator.of(context).pushReplacement(
+                Navigator.of(context).pushReplacement(
                     MaterialPageRoute(builder: (BuildContext context) {
-                  return const homeScreenForStudent();
-                }));*/
+                  return const ListSubjectStudentScreen();
+                }));
               },
             ),
             ListTile(

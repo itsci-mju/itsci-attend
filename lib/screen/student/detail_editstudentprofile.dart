@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_mobiletest2/screen/widget/navbar_student.dart';
+
 import 'package:intl/intl.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:http/http.dart' as http;
@@ -117,7 +117,7 @@ class _DetailEditStudentProfileState extends State<DetailEditStudentProfile> {
         body: Form(
           key: _formfield,
           child: Column(children: [
-            NavbarStudent(),
+            //NavbarStudent(),
             Center(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),

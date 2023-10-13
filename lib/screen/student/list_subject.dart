@@ -1,9 +1,16 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_application_mobiletest2/color.dart';
 import 'package:flutter_application_mobiletest2/controller/registration_controller.dart';
 import 'package:flutter_application_mobiletest2/controller/user_controller.dart';
 import 'package:flutter_application_mobiletest2/model/registration.dart';
 import 'package:flutter_application_mobiletest2/model/user.dart';
+import 'package:flutter_application_mobiletest2/screen/student/attendance_student.dart';
+import 'package:flutter_application_mobiletest2/screen/widget/drawer_student.dart';
+import 'package:flutter_application_mobiletest2/screen/widget/mainTextStyle.dart';
+import 'package:flutter_application_mobiletest2/screen/widget/my_abb_bar.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ListSubjectStudentScreen extends StatefulWidget {
@@ -23,9 +30,12 @@ class _ListSubjectStudentScreenState extends State<ListSubjectStudentScreen> {
   List<Registration>? registration;
   String? IdUser;
 
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+
   void fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? username = prefs.getString('username');
+    //String? username = prefs.getString('username');
+    String? username = "MJU6304106304";
 
     //print(username);
     if (username != null) {
@@ -47,8 +57,10 @@ class _ListSubjectStudentScreenState extends State<ListSubjectStudentScreen> {
                         reg.section?.course?.subject?.subjectName ?? "",
                     'type': reg.section?.type ?? "",
                     'group': reg.section?.sectionNumber,
+                    'startTime': reg.section?.startTime,
                   })
               .toList();
+
           isLoaded = true;
         });
       }
@@ -56,7 +68,104 @@ class _ListSubjectStudentScreenState extends State<ListSubjectStudentScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      key: scaffoldKey,
+      appBar: kMyAppBar,
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      endDrawer: const DrawerStudentWidget(),
+      body: ListView(
+        children: <Widget>[
+          Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+              ),
+              const Text(
+                "เลือกรายวิชาที่ต้องการดูการเข้าเรียน",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              for (var item in data)
+                Container(
+                  width: 330,
+                  height: 100,
+                  child: Card(
+                    elevation: 10,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(35),
+                    ),
+                    color: maincolor,
+                    child: InkWell(
+                      onTap: () async {
+                        print(item['id'].toString());
+                        await Future.delayed(Duration
+                            .zero); // รอเวลาเล็กน้อยก่อนไปหน้า DetailRoomScreen
+                        Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(builder: (BuildContext context) {
+                          return AttendanceStudentScreen(
+                            regId: item['id'].toString(),
+                          );
+                        }));
+                      },
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ListTile(
+                              title: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Row(
+                                    children: [
+                                      Text("${item['subjectid']} ",
+                                          style: CustomTextStyle.TextGeneral),
+                                      Text(" ${item['subjectname']}",
+                                          style: CustomTextStyle.TextGeneral),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text("กลุ่ม: ${item['group']} ",
+                                          style: CustomTextStyle.TextGeneral),
+                                      Text(" ประเภท: ${item['type']}",
+                                          style: CustomTextStyle.TextGeneral),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                          "${item['startTime'] != null ? item['startTime'].substring(0, 5) : 'N/A'}",
+                                          style: CustomTextStyle.TextGeneral),
+                                      const Text(" - ",
+                                          style: CustomTextStyle.TextGeneral),
+                                      Text(
+                                          "${item['startTime'] != null ? item['startTime'].substring(0, 5) : 'N/A'}",
+                                          style: CustomTextStyle.TextGeneral),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          )
+        ],
+      ),
+    );
   }
 }

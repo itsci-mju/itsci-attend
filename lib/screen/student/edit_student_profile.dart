@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_mobiletest2/controller/user_controller.dart';
-import 'package:flutter_application_mobiletest2/screen/widget/navbar_student.dart';
 import 'package:intl/intl.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:http/http.dart' as http;
@@ -88,10 +87,11 @@ class _EditStudentProfileState extends State<EditStudentProfile> {
           children: [
             Center(
               child: Column(children: [
-                NavbarStudent(),
+                //NavbarStudent(),
                 Center(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 30),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -107,12 +107,12 @@ class _EditStudentProfileState extends State<EditStudentProfile> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Image(
+                                    const Image(
                                       image: AssetImage("images/mjuicon.png"),
                                       height: 100,
                                       width: 100,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     ElevatedButton(
@@ -126,14 +126,14 @@ class _EditStudentProfileState extends State<EditStudentProfile> {
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         Card(
                           elevation: 10,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
-                          color: Color.fromARGB(255, 226, 226, 226),
+                          color: const Color.fromARGB(255, 226, 226, 226),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(10),
                             child: SizedBox(
@@ -172,7 +172,7 @@ class _EditStudentProfileState extends State<EditStudentProfile> {
                                       "วัน เดือน ปี ที่เกิด : ${DateFormat('dd-MM-yyyy').format(selecteData)}",
                                       style: CustomTextStyle.mainFontStyle,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 15,
                                     ),
                                     ElevatedButton(
@@ -187,7 +187,7 @@ class _EditStudentProfileState extends State<EditStudentProfile> {
                                               id: '${users?.id.toString()}');
                                         }));
                                       },
-                                      child: Text("แก้ไขรหัสผ่าน"),
+                                      child: const Text("แก้ไขรหัสผ่าน"),
                                     )
                                   ],
                                 ),
