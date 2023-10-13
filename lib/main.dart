@@ -21,8 +21,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: maincolor,
       ),
-      home: const homeScreenForStudent(),
-      //home: LoginScreen(),
+      home: const ListSubjectStudentScreen(),
+      //home: const LoginScreen(),
     );
   }
 }

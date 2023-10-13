@@ -21,7 +21,8 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
 
   final AttendanceScheduleController attendanceScheduleController =
       AttendanceScheduleController();
-  List<Map<String, dynamic>> data = [];
+  List<Map<String, dynamic>> dataAtten = [];
+  List<Map<String, dynamic>> dataReg = [];
   bool? isLoaded = false;
   List<AttendanceSchedule>? attendance;
 
@@ -31,10 +32,14 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
 
     setState(() {
       attendance = atten;
-      data = atten
+      dataReg = atten
           .map((atten) => {
                 'id': atten.id ?? "",
                 'registration_id': atten.registration?.id ?? "",
+                'subjectid':
+                    atten.registration?.section?.course?.subject?.subjectId ??
+                        "",
+                'userid': atten.registration?.user?.userid ?? "",
                 'weekNo': atten.weekNo ?? "",
                 'checkInTime': atten.checkInTime ?? "",
                 'status': atten.status ?? "",
@@ -50,7 +55,7 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
 
     setState(() {
       attendance = atten;
-      data = atten
+      dataAtten = atten
           .map((atten) => {
                 'subjectid':
                     atten.registration?.section?.course?.subject?.subjectId ??
@@ -115,6 +120,7 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
               alignment: Alignment.center,
               child: Card(
                 elevation: 10,
+                color: Color.fromARGB(255, 226, 226, 226),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -150,14 +156,67 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
                       weekNum = newValue!;
                     });
                   },
-
                   underline: const SizedBox(),
                 ),
               ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Column(
+              children: dataReg.map((item) {
+                return Container(
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    children: [
+                      Text("วิชา: ${item['subjectid']}",
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
+                      Text("รหัสนักศึกษา: ${item['userid']}",
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
+                      Text("เวลาเข้าเรียน: ${item['checkInTime']}",
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("สถานะ: ",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              )),
+                          Text(
+                            "${item['status']}",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: getColorForStatus(item['status']),
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
             ),
           ],
         )
       ]),
     );
+  }
+}
+
+Color getColorForStatus(String status) {
+  if (status == "เข้าเรียนปกติ") {
+    return Colors.green; // สีเขียวสำหรับ "เข้าเรียนปกติ"
+  } else if (status == "เข้าเรียนสาย") {
+    return Colors.orange; // สีส้มสำหรับ "เข้าเรียนสาย"
+  } else if (status == "ขาดเรียน") {
+    return Colors.red; // สีแดงสำหรับ "ขาด"
+  } else {
+    return Colors.black; // สีดำหากไม่ระบุสี
   }
 }

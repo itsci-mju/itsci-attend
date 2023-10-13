@@ -49,8 +49,8 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
 
   void fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    //String? username = prefs.getString('username');
-    String? username = "MJU6304106304";
+    String? username = prefs.getString('username');
+    //String? username = "MJU6304106304";
 
     //print(username);
     if (username != null) {
@@ -67,16 +67,19 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
 
   void onQRViewCamera(QRViewController controller) {
     this.controller = controller;
-    controller.scannedDataStream.listen((scanData) {
-      //print(scanData.code);
+    controller.scannedDataStream.listen((scanData) async {
       splitData(scanData.code.toString());
       setState(() {
         result = scanData;
         scannedData =
             result != null ? result!.code : null; // ดึงข้อมูลจาก result
       });
-      if (scannedData != null) {
+      if (scannedData != null && regId != null) {
+        //หาความต่างของเวลาเพื่อกำหนดสถานะ
+        calculateTime(startTime!, checkInTimeForCal!);
         showScanSuccessDialog(context);
+      } else {
+        showScanUserNotInSectionDialog(context);
       }
     });
   }
@@ -101,10 +104,10 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
     } else {
       status = "ขาดเรียน";
     }
-    print("TestStartTimeMinInt ${startTimeMinInt}");
+    /*print("TestStartTimeMinInt ${startTimeMinInt}");
     print("TestCheckTimeMinInt ${checkTimeMinInt}");
     print("TestResult ${timeResult}");
-    print("TestStatus ${status}");
+    print("TestStatus ${status}");*/
   }
 
   Future<void> splitData(String data) async {
@@ -139,9 +142,6 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
     Registration? reg = await registrationController
         .get_RegistrationIdBySectionIdandIdUser(sectionId!, IdUser!);
     regId = reg!.id.toString();
-
-    //หาความต่างของเวลาเพื่อกำหนดสถานะ
-    calculateTime(startTime!, checkInTimeForCal!);
   }
 
   void showScanSuccessDialog(BuildContext context) {
@@ -151,8 +151,8 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
       builder: (context) {
         return AlertDialog(
           title: Text('สแกนสำเร็จ!'),
-          content: Text('ค่าที่ได้: $scannedData'),
-          //content: Text('การสแกนเสร็จสิ้น'),
+          //content: Text('ค่าที่ได้: $scannedData'),
+          content: Text('การสแกนเสร็จสิ้น'),
           actions: [
             TextButton(
               onPressed: () async {
@@ -167,6 +167,33 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
                 if (response.statusCode == 200) {
                   print("บันทึกการเข้าเรียนสำเร็จ");
                 }
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return const homeScreenForStudent();
+                    },
+                  ),
+                );
+              },
+              child: const Text('ตกลง'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showScanUserNotInSectionDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('แจ้งเตือน!'),
+          content: const Text('คุณไม่ได้ลงทะเบียนเรียนรายวิชานี้'),
+          actions: [
+            TextButton(
+              onPressed: () async {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (BuildContext context) {
