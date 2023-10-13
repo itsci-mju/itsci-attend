@@ -58,13 +58,29 @@ class _ListSubjectStudentScreenState extends State<ListSubjectStudentScreen> {
                     'type': reg.section?.type ?? "",
                     'group': reg.section?.sectionNumber,
                     'startTime': reg.section?.startTime,
+                    'duration': reg.section?.duration,
                   })
               .toList();
-
           isLoaded = true;
         });
       }
     }
+  }
+
+  String addTime(String timeString, int hoursToAdd) {
+    // แปลงเวลาจากสตริงเป็น DateTime
+    final originalTime = DateTime.parse("2023-01-01 $timeString:00");
+
+    // บวกเวลาในรูปแบบของนาที
+    final newTime = originalTime.add(Duration(hours: hoursToAdd));
+
+    // แปลงผลลัพธ์กลับเป็นสตริง
+    final newTimeString =
+        "${newTime.hour}:${newTime.minute.toString().padLeft(2, '0')}";
+
+    // ทำอะไรกับเวลาใหม่ ที่คุณต้องการ เช่น พิมพ์ผลลัพธ์
+    print(" TestNewTime: ${newTimeString}");
+    return "${newTime.hour}:${newTime.minute.toString().padLeft(2, '0')}";
   }
 
   @override
@@ -106,7 +122,7 @@ class _ListSubjectStudentScreenState extends State<ListSubjectStudentScreen> {
                     color: maincolor,
                     child: InkWell(
                       onTap: () async {
-                        print(item['id'].toString());
+                        //print(item['id'].toString());
                         await Future.delayed(Duration
                             .zero); // รอเวลาเล็กน้อยก่อนไปหน้า DetailRoomScreen
                         Navigator.of(context).pushReplacement(
@@ -126,6 +142,7 @@ class _ListSubjectStudentScreenState extends State<ListSubjectStudentScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text("${item['subjectid']} ",
                                           style: CustomTextStyle.TextGeneral),
@@ -134,6 +151,7 @@ class _ListSubjectStudentScreenState extends State<ListSubjectStudentScreen> {
                                     ],
                                   ),
                                   Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text("กลุ่ม: ${item['group']} ",
                                           style: CustomTextStyle.TextGeneral),
@@ -141,7 +159,9 @@ class _ListSubjectStudentScreenState extends State<ListSubjectStudentScreen> {
                                           style: CustomTextStyle.TextGeneral),
                                     ],
                                   ),
+                                  const SizedBox(height: 5),
                                   Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
                                           "${item['startTime'] != null ? item['startTime'].substring(0, 5) : 'N/A'}",
@@ -149,8 +169,9 @@ class _ListSubjectStudentScreenState extends State<ListSubjectStudentScreen> {
                                       const Text(" - ",
                                           style: CustomTextStyle.TextGeneral),
                                       Text(
-                                          "${item['startTime'] != null ? item['startTime'].substring(0, 5) : 'N/A'}",
-                                          style: CustomTextStyle.TextGeneral),
+                                        "${addTime(item['startTime'].substring(0, 5), item['duration'])}",
+                                        style: CustomTextStyle.TextGeneral,
+                                      ),
                                     ],
                                   ),
                                 ],

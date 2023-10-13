@@ -6,6 +6,7 @@ import 'package:flutter_application_mobiletest2/model/attendanceSchedule.dart';
 import 'package:flutter_application_mobiletest2/screen/widget/drawer_student.dart';
 import 'package:flutter_application_mobiletest2/screen/widget/mainTextStyle.dart';
 import 'package:flutter_application_mobiletest2/screen/widget/my_abb_bar.dart';
+import 'package:intl/intl.dart';
 
 class AttendanceStudentScreen extends StatefulWidget {
   final String regId;
@@ -21,21 +22,20 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
 
   final AttendanceScheduleController attendanceScheduleController =
       AttendanceScheduleController();
-  List<Map<String, dynamic>> dataAtten = [];
   List<Map<String, dynamic>> dataReg = [];
   bool? isLoaded = false;
   List<AttendanceSchedule>? attendance;
+  int? weekNoCheck = 1;
 
-  void setRegData(String regId) async {
+  void showAtten(String regId, int weekNoCheck) async {
     List<AttendanceSchedule> atten = await attendanceScheduleController
         .listAttendanceScheduleByRegistrationId(regId);
 
     setState(() {
       attendance = atten;
       dataReg = atten
+          .where((atten) => atten.weekNo == weekNoCheck)
           .map((atten) => {
-                'id': atten.id ?? "",
-                'registration_id': atten.registration?.id ?? "",
                 'subjectid':
                     atten.registration?.section?.course?.subject?.subjectId ??
                         "",
@@ -49,30 +49,10 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
     });
   }
 
-  void showAtten(String week) async {
-    List<AttendanceSchedule> atten =
-        await attendanceScheduleController.listAttendanceScheduleByWeek(week);
-
-    setState(() {
-      attendance = atten;
-      dataAtten = atten
-          .map((atten) => {
-                'subjectid':
-                    atten.registration?.section?.course?.subject?.subjectId ??
-                        "",
-                'userid': atten.registration?.user?.userid ?? "",
-                'checkInTime': atten.checkInTime ?? "",
-                'status': atten.status ?? "",
-              })
-          .toList();
-    });
-  }
-
   @override
   void initState() {
     super.initState();
-    setRegData(widget.regId);
-    showAtten(weekNum);
+    showAtten(widget.regId, weekNoCheck!);
   }
 
   String weekNum = '1';
@@ -109,62 +89,78 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
             ),
             const Text(
               "การเข้าเรียน",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
             ),
             const SizedBox(
               height: 20,
             ),
-            Container(
-              width: 150,
-              height: 50,
-              alignment: Alignment.center,
-              child: Card(
-                elevation: 10,
-                color: Color.fromARGB(255, 226, 226, 226),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: DropdownButton<String>(
-                  isExpanded: true,
-                  value: weekNum,
-                  style: const TextStyle(
-                    fontSize: 15,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text("สัปดาห์ที่ ",
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                Container(
+                  width: 100,
+                  height: 40,
+                  alignment: Alignment.center,
+                  child: Card(
+                    elevation: 10,
+                    color: Color.fromARGB(255, 226, 226, 226),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: DropdownButton<String>(
+                      isExpanded: true,
+                      value: weekNum,
+                      style: const TextStyle(
+                        fontSize: 15,
+                      ),
+                      icon: const Padding(
+                        padding: EdgeInsets.only(
+                            right:
+                                20), // กำหนดการเว้นระหว่างไอคอนและเนื้อหาที่นี่
+                        child: Icon(Icons.keyboard_arrow_down),
+                      ), // กำหนดไอคอนที่นี่
+                      iconSize: 24, // ขนาดของไอคอน
+                      iconEnabledColor: Colors.black,
+                      // สีของไอคอน
+                      items: weekNumItems.map(
+                        (String weekNumItems) {
+                          return DropdownMenuItem(
+                            value: weekNumItems,
+                            child: Center(
+                              child: Text(
+                                "$weekNumItems",
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ),
+                          );
+                        },
+                      ).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          weekNum = newValue!;
+                          showAtten(widget.regId, int.parse(weekNum));
+                        });
+                      },
+                      underline: const SizedBox(),
+                    ),
                   ),
-                  icon: const Padding(
-                    padding: EdgeInsets.only(
-                        right: 20), // กำหนดการเว้นระหว่างไอคอนและเนื้อหาที่นี่
-                    child: Icon(Icons.keyboard_arrow_down),
-                  ), // กำหนดไอคอนที่นี่
-                  iconSize: 24, // ขนาดของไอคอน
-                  iconEnabledColor: Colors.black,
-                  // สีของไอคอน
-                  items: weekNumItems.map(
-                    (String weekNumItems) {
-                      return DropdownMenuItem(
-                        value: weekNumItems,
-                        child: Center(
-                          child: Text(
-                            "WeeK $weekNumItems",
-                            style: TextStyle(color: Colors.black),
-                          ),
-                        ),
-                      );
-                    },
-                  ).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      weekNum = newValue!;
-                    });
-                  },
-                  underline: const SizedBox(),
                 ),
-              ),
+              ],
             ),
             const SizedBox(
               height: 20,
             ),
             Column(
               children: dataReg.map((item) {
+                final checkInTime = DateTime.parse(item['checkInTime']);
+                final dateFormatter = DateFormat('dd-MM-yyy');
+                final timeFormatter = DateFormat('HH:mm:ss');
+
+                final formattedDate = dateFormatter.format(checkInTime);
+                final formattedTime = timeFormatter.format(checkInTime);
                 return Container(
                   margin:
                       const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
@@ -178,8 +174,6 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
                       Text("วิชา: ${item['subjectid']}",
                           style: const TextStyle(fontWeight: FontWeight.bold)),
                       Text("รหัสนักศึกษา: ${item['userid']}",
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
-                      Text("เวลาเข้าเรียน: ${item['checkInTime']}",
                           style: const TextStyle(fontWeight: FontWeight.bold)),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -195,6 +189,16 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
                               color: getColorForStatus(item['status']),
                             ),
                           )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("เวลาเข้าเรียน: $formattedTime",
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          SizedBox(width: 5),
+                          Text("วันที่: $formattedDate",
+                              style: TextStyle(fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ],
