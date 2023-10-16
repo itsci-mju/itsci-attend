@@ -22,8 +22,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: maincolor,
       ),
-      home: const DetailStudentProfile(),
-      //home: const LoginScreen(),
+      //home: const DetailStudentProfile(),
+      home: const LoginScreen(),
     );
   }
 }

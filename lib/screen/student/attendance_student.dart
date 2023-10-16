@@ -23,13 +23,13 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
 
   final AttendanceScheduleController attendanceScheduleController =
       AttendanceScheduleController();
-  List<Map<String, dynamic>> dataReg = [];
+  List<Map<String, dynamic>> data = [];
   bool? isLoaded = false;
   List<AttendanceSchedule>? attendance;
   int? weekNoCheck = 1;
   String? type;
   String? checkInTime;
-  String? dateFormatter = "";
+  bool checkInTimeandType = false;
 
   void showAtten(String regId, int weekNoCheck) async {
     List<AttendanceSchedule> atten = await attendanceScheduleController
@@ -37,7 +37,7 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
 
     setState(() {
       attendance = atten;
-      dataReg = atten
+      data = atten
           .where((atten) => atten.weekNo == weekNoCheck)
           .map((atten) => {
                 'subjectid':
@@ -50,13 +50,12 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
                 'type': atten.registration?.section?.type ?? "",
               })
           .toList();
-      type = dataReg.isNotEmpty ? dataReg[0]['type'] : null;
-      checkInTime = dataReg.isNotEmpty ? dataReg[0]['checkInTime'] : null;
-      if (checkInTime != null) {
-        dateFormatter = DateFormat("dd-MM-yyyy")
-            .format(DateTime.parse(checkInTime!).toLocal());
+      type = data.isNotEmpty ? data[0]['type'] : null;
+      checkInTime = data.isNotEmpty ? data[0]['checkInTime'] : null;
+      if (checkInTime != null && type != null) {
+        checkInTimeandType = true;
       } else {
-        dateFormatter = "";
+        checkInTimeandType = false;
       }
       isLoaded = true;
     });
@@ -115,13 +114,7 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
                   const SizedBox(
                     height: 5,
                   ),
-                  Text("ประเภท: ${type ?? ""}",
-                      style: CustomTextStyle.TextGeneral),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Text("วันที่: ${dateFormatter ?? ""}",
-                      style: CustomTextStyle.TextGeneral),
+                  TimeAndType(),
                   const SizedBox(
                     height: 5,
                   ),
@@ -188,7 +181,7 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
               height: 15,
             ),
             Column(
-              children: dataReg.map((item) {
+              children: data.map((item) {
                 final checkInTime =
                     DateTime.parse(item['checkInTime']).toLocal();
                 final timeFormatter = DateFormat('HH:mm:ss');
@@ -240,6 +233,25 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
         )
       ]),
     );
+  }
+
+  // ignore: non_constant_identifier_names
+  Widget TimeAndType() {
+    if (checkInTimeandType) {
+      return Column(
+        children: [
+          Text("ประเภท: ${type ?? ""}", style: CustomTextStyle.TextGeneral),
+          const SizedBox(
+            height: 5,
+          ),
+          Text(
+              "วันที่เข้าเรียน : ${DateFormat('dd-MM-yyyy').format(DateTime.parse(checkInTime!).toLocal())}",
+              style: CustomTextStyle.TextGeneral)
+        ],
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
   }
 }
 

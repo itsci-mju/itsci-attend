@@ -127,9 +127,9 @@ class _homeScreenForStudentState extends State<homeScreenForStudent> {
                                     child: Text(
                                       "สแกนคิวอาร์โค้ด",
                                       style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                      ),
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
                                     ),
                                   ),
                                 ),
@@ -185,9 +185,9 @@ class _homeScreenForStudentState extends State<homeScreenForStudent> {
                                     child: Text(
                                       "การเข้าเรียน",
                                       style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                      ),
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
                                     ),
                                   ),
                                 ),

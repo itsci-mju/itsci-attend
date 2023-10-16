@@ -20,8 +20,8 @@ class CustomTextStyle {
   );
 
   static const TextStyle createFontStyle = TextStyle(
-    fontSize: 25,
-    color: Colors.green,
+    fontSize: 15,
+    color: Color.fromARGB(255, 0, 0, 0),
     fontWeight: FontWeight.bold,
   );
 }

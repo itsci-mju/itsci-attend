@@ -43,8 +43,8 @@ class _DetailStudentProfileState extends State<DetailStudentProfile> {
 
   void fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    //String? username = prefs.getString('username');
-    String? username = "MJU6304106304";
+    String? username = prefs.getString('username');
+    //String? username = "MJU6304106304";
 
     //print(username);
     if (username != null) {
@@ -148,19 +148,27 @@ class _DetailStudentProfileState extends State<DetailStudentProfile> {
                       height: 15,
                     ),
                     Center(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(),
-                        onPressed: () async {
-                          await Future.delayed(Duration
-                              .zero); // รอเวลาเล็กน้อยก่อนไปหน้า DetailRoomScreen
-                          Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) {
-                            return EditStudentPassword(
-                                id: '${user?.id.toString()}');
-                          }));
-                        },
-                        child: const Text("แก้ไขรหัสผ่าน"),
+                      child: Container(
+                        width: 150, // กำหนดความกว้างของปุ่ม
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.circular(20.0), // กำหนดมุม
+                            ),
+                          ),
+                          onPressed: () async {
+                            await Future.delayed(Duration
+                                .zero); // รอเวลาเล็กน้อยก่อนไปหน้า DetailRoomScreen
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) {
+                              return EditStudentPassword(
+                                  id: '${user?.id.toString()}');
+                            }));
+                          },
+                          child: const Text("แก้ไขรหัสผ่าน"),
+                        ),
                       ),
                     ),
                     const SizedBox(
