@@ -28,6 +28,7 @@ class _homeScreenForStudentState extends State<homeScreenForStudent> {
   void fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? username = prefs.getString('username');
+    //String? username = "MJU6304106304";
 
     //print(username);
     if (username != null) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_application_mobiletest2/color.dart';
 import 'package:flutter_application_mobiletest2/controller/attendanceschedule_controller.dart';
 import 'package:flutter_application_mobiletest2/model/attendanceSchedule.dart';
 import 'package:flutter_application_mobiletest2/screen/widget/drawer_student.dart';
@@ -26,6 +27,9 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
   bool? isLoaded = false;
   List<AttendanceSchedule>? attendance;
   int? weekNoCheck = 1;
+  String? type;
+  String? checkInTime;
+  String? dateFormatter = "";
 
   void showAtten(String regId, int weekNoCheck) async {
     List<AttendanceSchedule> atten = await attendanceScheduleController
@@ -43,8 +47,17 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
                 'weekNo': atten.weekNo ?? "",
                 'checkInTime': atten.checkInTime ?? "",
                 'status': atten.status ?? "",
+                'type': atten.registration?.section?.type ?? "",
               })
           .toList();
+      type = dataReg.isNotEmpty ? dataReg[0]['type'] : null;
+      checkInTime = dataReg.isNotEmpty ? dataReg[0]['checkInTime'] : null;
+      if (checkInTime != null) {
+        dateFormatter = DateFormat("dd-MM-yyyy")
+            .format(DateTime.parse(checkInTime!).toLocal());
+      } else {
+        dateFormatter = "";
+      }
       isLoaded = true;
     });
   }
@@ -87,79 +100,98 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
             ),
-            const Text(
-              "การเข้าเรียน",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text("สัปดาห์ที่ ",
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                Container(
-                  width: 100,
-                  height: 40,
-                  alignment: Alignment.center,
-                  child: Card(
-                    elevation: 10,
-                    color: Color.fromARGB(255, 226, 226, 226),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: DropdownButton<String>(
-                      isExpanded: true,
-                      value: weekNum,
-                      style: const TextStyle(
-                        fontSize: 15,
-                      ),
-                      icon: const Padding(
-                        padding: EdgeInsets.only(
-                            right:
-                                20), // กำหนดการเว้นระหว่างไอคอนและเนื้อหาที่นี่
-                        child: Icon(Icons.keyboard_arrow_down),
-                      ), // กำหนดไอคอนที่นี่
-                      iconSize: 24, // ขนาดของไอคอน
-                      iconEnabledColor: Colors.black,
-                      // สีของไอคอน
-                      items: weekNumItems.map(
-                        (String weekNumItems) {
-                          return DropdownMenuItem(
-                            value: weekNumItems,
-                            child: Center(
-                              child: Text(
-                                "$weekNumItems",
-                                style: TextStyle(color: Colors.black),
-                              ),
-                            ),
-                          );
-                        },
-                      ).toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          weekNum = newValue!;
-                          showAtten(widget.regId, int.parse(weekNum));
-                        });
-                      },
-                      underline: const SizedBox(),
-                    ),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: maincolor,
+                //color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                children: [
+                  const Text("การเข้าเรียน",
+                      style: CustomTextStyle.TextGeneral),
+                  const SizedBox(
+                    height: 5,
                   ),
-                ),
-              ],
+                  Text("ประเภท: ${type ?? ""}",
+                      style: CustomTextStyle.TextGeneral),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Text("วันที่: ${dateFormatter ?? ""}",
+                      style: CustomTextStyle.TextGeneral),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text("สัปดาห์ที่ ",
+                          style: CustomTextStyle.TextGeneral),
+                      Container(
+                        width: 100,
+                        height: 40,
+                        alignment: Alignment.center,
+                        child: Card(
+                          elevation: 3,
+                          color: const Color.fromARGB(255, 255, 255, 255),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: DropdownButton<String>(
+                            isExpanded: true,
+                            value: weekNum,
+                            style: const TextStyle(
+                              fontSize: 15,
+                            ),
+                            icon: const Padding(
+                              padding: EdgeInsets.only(
+                                  right:
+                                      20), // กำหนดการเว้นระหว่างไอคอนและเนื้อหาที่นี่
+                              child: Icon(Icons.keyboard_arrow_down),
+                            ), // กำหนดไอคอนที่นี่
+                            iconSize: 24, // ขนาดของไอคอน
+                            iconEnabledColor: Colors.black,
+                            // สีของไอคอน
+                            items: weekNumItems.map(
+                              (String weekNumItems) {
+                                return DropdownMenuItem(
+                                  value: weekNumItems,
+                                  child: Center(
+                                    child: Text(
+                                      "$weekNumItems",
+                                      style:
+                                          const TextStyle(color: Colors.black),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                weekNum = newValue!;
+                                showAtten(widget.regId, int.parse(weekNum));
+                              });
+                            },
+                            underline: const SizedBox(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
             const SizedBox(
-              height: 20,
+              height: 15,
             ),
             Column(
               children: dataReg.map((item) {
-                final checkInTime = DateTime.parse(item['checkInTime']);
-                final dateFormatter = DateFormat('dd-MM-yyy');
+                final checkInTime =
+                    DateTime.parse(item['checkInTime']).toLocal();
                 final timeFormatter = DateFormat('HH:mm:ss');
-
-                final formattedDate = dateFormatter.format(checkInTime);
                 final formattedTime = timeFormatter.format(checkInTime);
                 return Container(
                   margin:
@@ -178,7 +210,7 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("สถานะ: ",
+                          const Text("สถานะ: ",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                               )),
@@ -195,10 +227,8 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text("เวลาเข้าเรียน: $formattedTime",
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          SizedBox(width: 5),
-                          Text("วันที่: $formattedDate",
-                              style: TextStyle(fontWeight: FontWeight.bold)),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ],

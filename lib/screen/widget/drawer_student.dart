@@ -3,6 +3,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_application_mobiletest2/color.dart';
 import 'package:flutter_application_mobiletest2/screen/login.dart';
+import 'package:flutter_application_mobiletest2/screen/student/detail_student_profile.dart';
 import 'package:flutter_application_mobiletest2/screen/student/home_screen.dart';
 import 'package:flutter_application_mobiletest2/screen/student/list_subject.dart';
 import 'package:flutter_application_mobiletest2/screen/student/scan_screen.dart';
@@ -13,8 +14,6 @@ class DrawerStudentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double kDrawerWidth = 200;
-
     return Drawer(
       backgroundColor: maincolor,
       elevation: 10,
@@ -88,10 +87,10 @@ class DrawerStudentWidget extends StatelessWidget {
                 style: TextStyle(color: Colors.white),
               ),
               onTap: () {
-                /*Navigator.of(context).pushReplacement(
+                Navigator.of(context).pushReplacement(
                     MaterialPageRoute(builder: (BuildContext context) {
-                  return const StudentListScreen();
-                }));*/
+                  return const DetailStudentProfile();
+                }));
               },
             ),
             ListTile(

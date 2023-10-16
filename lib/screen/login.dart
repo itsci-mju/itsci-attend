@@ -121,11 +121,11 @@ class _loginScreenState extends State<LoginScreen> {
                           width: MediaQuery.of(context).size.width *
                               0.4, // กำหนดความกว้างเป็น 40% ของความกว้างของหน้าจอ
                         ),
-                        SizedBox(height: 30),
+                        const SizedBox(height: 30),
                         TextFormField(
                           keyboardType: TextInputType.text,
                           controller: usernameController,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             labelText: "Username",
                             border: OutlineInputBorder(),
                             prefixIcon: Icon(Icons.person),
@@ -133,19 +133,19 @@ class _loginScreenState extends State<LoginScreen> {
                           validator: (value) {
                             //ถ้าใส่ email ถูก
                             bool usernameValid =
-                                RegExp(r"^[MJU]+[0-9]").hasMatch(value!);
+                                RegExp(r'^.{1,30}$').hasMatch(value!);
 
                             //กรณีไม่ใส่ username
                             if (value.isEmpty) {
-                              return "Enter Username";
+                              return "กรุณากรอก ชื่อผู้ใช้";
                             }
                             //กรณีใส่ usename ผิด
                             else if (!usernameValid) {
-                              return "Username Must be MJUรหัสนักศึกษา";
+                              return "ชื่อผู้ใช้ต้องไม่เกิน 30 ตัว";
                             }
                           },
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                         TextFormField(
@@ -154,8 +154,8 @@ class _loginScreenState extends State<LoginScreen> {
                           obscureText: passToggle,
                           decoration: InputDecoration(
                               labelText: "Password",
-                              border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.lock),
+                              border: const OutlineInputBorder(),
+                              prefixIcon: const Icon(Icons.lock),
                               suffixIcon: InkWell(
                                 onTap: () {
                                   setState(() {
@@ -171,25 +171,23 @@ class _loginScreenState extends State<LoginScreen> {
                                 RegExp(r'^.{8,}$').hasMatch(value!);
 
                             if (value.isEmpty) {
-                              return "กรุณากรอก Password";
+                              return "กรุณากรอก รหัสผ่าน";
                             }
                             //กรณีใส่ Password ผิด
                             else if (!passwordValid) {
-                              return "กรุณากรอก Password ตั้งแต่ 8 ตัวขึ้นไป";
+                              return "กรุณากรอก รหัสผ่าน ตั้งแต่ 8 ตัวขึ้นไป";
                             }
                           },
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 35,
                         ),
                         InkWell(
                           onTap: () async {
                             if (usernameController.text == "root" &&
                                 passworldController.text == "1234") {
-                              SharedPreferences prefs =
-                                  await SharedPreferences.getInstance();
-                              prefs.setString(
-                                  'username', usernameController.text);
+                              //SharedPreferences prefs = await SharedPreferences.getInstance();
+                              //prefs.setString('username', usernameController.text);
                               /*Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
                                       builder: (BuildContext context) {
@@ -240,7 +238,7 @@ class _loginScreenState extends State<LoginScreen> {
                                 color: maincolor,
                                 borderRadius: BorderRadius.circular(5),
                               ),
-                              child: Center(
+                              child: const Center(
                                 child: Text("Log In",
                                     style: TextStyle(
                                         color: Colors.white,

@@ -34,16 +34,16 @@ class _ListSubjectStudentScreenState extends State<ListSubjectStudentScreen> {
 
   void fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    //String? username = prefs.getString('username');
-    String? username = "MJU6304106304";
+    String? username = prefs.getString('username');
+    //String? username = "MJU6304106304";
 
     //print(username);
     if (username != null) {
       User? user = await userController.get_UserByUsername(username);
-      print(user?.id);
+      //print(user?.id);
       if (user != null) {
         IdUser = user.id.toString();
-        print(IdUser);
+        //print(IdUser);
         List<Registration> reg =
             await registrationController.get_ViewSubject(user.id.toString());
 
@@ -75,12 +75,8 @@ class _ListSubjectStudentScreenState extends State<ListSubjectStudentScreen> {
     final newTime = originalTime.add(Duration(hours: hoursToAdd));
 
     // แปลงผลลัพธ์กลับเป็นสตริง
-    final newTimeString =
-        "${newTime.hour}:${newTime.minute.toString().padLeft(2, '0')}";
-
-    // ทำอะไรกับเวลาใหม่ ที่คุณต้องการ เช่น พิมพ์ผลลัพธ์
-    print(" TestNewTime: ${newTimeString}");
-    return "${newTime.hour}:${newTime.minute.toString().padLeft(2, '0')}";
+    //print(" TestNewTime: ${newTimeString}");
+    return "${newTime.hour.toString().padLeft(2, '0')}:${newTime.minute.toString().padLeft(2, '0')}";
   }
 
   @override
