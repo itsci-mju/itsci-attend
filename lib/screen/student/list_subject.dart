@@ -110,7 +110,7 @@ class _ListSubjectStudentScreenState extends State<ListSubjectStudentScreen> {
               for (var item in data)
                 Container(
                   width: 330,
-                  height: 100,
+                  //height: 100,
                   child: Card(
                     elevation: 10,
                     shape: RoundedRectangleBorder(
@@ -136,15 +136,21 @@ class _ListSubjectStudentScreenState extends State<ListSubjectStudentScreen> {
                           children: [
                             ListTile(
                               title: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                  Column(
                                     children: [
                                       Text("${item['subjectid']} ",
                                           style: CustomTextStyle.TextGeneral),
-                                      Text(" ${item['subjectname']}",
-                                          style: CustomTextStyle.TextGeneral),
+                                      Text(
+                                        " ${item['subjectname']}",
+                                        style: CustomTextStyle.TextGeneral,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines:
+                                            2, // กำหนดจำนวนบรรทัดสูงสุดที่แสดง
+                                        textAlign: TextAlign
+                                            .center, // จัดให้อยู่ตรงกลาง,
+                                      )
                                     ],
                                   ),
                                   Row(

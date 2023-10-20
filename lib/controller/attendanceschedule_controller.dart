@@ -29,6 +29,21 @@ class AttendanceScheduleController {
     return list;
   }
 
+  Future listAttendanceScheduleBySectionIdAndWeek(
+      String week, String secid) async {
+    var url = Uri.parse(
+        baseURL + '/attendanceschedule/getbyweek/' + week + "/" + secid);
+    http.Response response = await http.get(url);
+    final utf8Body = utf8.decode(response.bodyBytes);
+    List<dynamic> jsonResponse = json.decode(utf8Body);
+    List<AttendanceSchedule> list = jsonResponse
+        .map((e) => AttendanceSchedule.formJsonToAttendanceSchedule(e))
+        .toList();
+    print(list);
+    print(response);
+    return list;
+  }
+
   Future get_AttendanceSchedule(String id) async {
     var url = Uri.parse(baseURL + '/attendanceschedule/getbyid/' + id);
     http.Response response = await http.get(url);
@@ -76,17 +91,5 @@ class AttendanceScheduleController {
         await http.post(url, headers: headers, body: jsonData);
     print(response.body);
     return response;
-  }
-
-  Future listAttendanceScheduleByWeek(String week) async {
-    var url = Uri.parse(baseURL + '/attendanceschedule/getbyweek/' + week);
-    http.Response response = await http.get(url);
-    final utf8Body = utf8.decode(response.bodyBytes);
-    List<dynamic> jsonResponse = json.decode(utf8Body);
-    List<AttendanceSchedule> list = jsonResponse
-        .map((e) => AttendanceSchedule.formJsonToAttendanceSchedule(e))
-        .toList();
-    print(list);
-    return list;
   }
 }

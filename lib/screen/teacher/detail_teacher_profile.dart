@@ -2,24 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_application_mobiletest2/color.dart';
-import 'package:flutter_application_mobiletest2/controller/student_controller.dart';
 import 'package:flutter_application_mobiletest2/controller/user_controller.dart';
 import 'package:flutter_application_mobiletest2/model/user.dart';
-import 'package:flutter_application_mobiletest2/screen/student/edit_student_password.dart';
-import 'package:flutter_application_mobiletest2/screen/widget/drawer_student.dart';
-import 'package:flutter_application_mobiletest2/screen/widget/mainTextStyle.dart';
+import 'package:flutter_application_mobiletest2/screen/teacher/edit_teacher_password.dart';
+import 'package:flutter_application_mobiletest2/screen/widget/drawer_teacher.dart';
 import 'package:flutter_application_mobiletest2/screen/widget/my_abb_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class DetailStudentProfile extends StatefulWidget {
-  const DetailStudentProfile({super.key});
+class DetailTeacherProfile extends StatefulWidget {
+  const DetailTeacherProfile({super.key});
 
   @override
-  State<DetailStudentProfile> createState() => _DetailStudentProfileState();
+  State<DetailTeacherProfile> createState() => _DetailTeacherProfileState();
 }
 
-class _DetailStudentProfileState extends State<DetailStudentProfile> {
+class _DetailTeacherProfileState extends State<DetailTeacherProfile> {
   TextEditingController idController = TextEditingController();
   TextEditingController useridController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -68,7 +66,7 @@ class _DetailStudentProfileState extends State<DetailStudentProfile> {
     return Scaffold(
       appBar: kMyAppBar,
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-      endDrawer: const DrawerStudentWidget(),
+      endDrawer: const DrawerTeacherWidget(),
       body: Form(
         key: _formfield,
         child: Column(children: [
@@ -106,13 +104,6 @@ class _DetailStudentProfileState extends State<DetailStudentProfile> {
                     ),
                     Text(
                       "นามสกุล : ${user?.lname ?? ""}",
-                      style: const TextStyle(fontSize: 15),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      "รหัสนักศึกษา : ${user?.userid ?? ""}",
                       style: const TextStyle(fontSize: 15),
                     ),
                     const SizedBox(
@@ -162,7 +153,7 @@ class _DetailStudentProfileState extends State<DetailStudentProfile> {
                             Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
                                     builder: (BuildContext context) {
-                              return EditStudentPassword(
+                              return EditTeacherPassword(
                                   id: '${user?.id.toString()}');
                             }));
                           },

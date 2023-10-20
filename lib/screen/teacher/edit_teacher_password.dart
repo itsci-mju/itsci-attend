@@ -2,28 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_application_mobiletest2/color.dart';
-import 'package:flutter_application_mobiletest2/controller/student_controller.dart';
 import 'package:flutter_application_mobiletest2/controller/user_controller.dart';
 import 'package:flutter_application_mobiletest2/model/user.dart';
-import 'package:flutter_application_mobiletest2/screen/student/detail_student_profile.dart';
-import 'package:flutter_application_mobiletest2/screen/widget/drawer_student.dart';
+import 'package:flutter_application_mobiletest2/screen/teacher/detail_teacher_profile.dart';
+import 'package:flutter_application_mobiletest2/screen/widget/drawer_teacher.dart';
 import 'package:flutter_application_mobiletest2/screen/widget/mainTextStyle.dart';
 import 'package:flutter_application_mobiletest2/screen/widget/my_abb_bar.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:http/http.dart' as http;
 
-class EditStudentPassword extends StatefulWidget {
+class EditTeacherPassword extends StatefulWidget {
   final String id;
-  const EditStudentPassword({super.key, required this.id});
+  const EditTeacherPassword({super.key, required this.id});
 
   @override
-  State<EditStudentPassword> createState() => _EditStudentPasswordState();
+  State<EditTeacherPassword> createState() => _EditTeacherPasswordState();
 }
 
-class _EditStudentPasswordState extends State<EditStudentPassword> {
+class _EditTeacherPasswordState extends State<EditTeacherPassword> {
   TextEditingController passwordController = TextEditingController();
   final UserController userController = UserController();
-  final StudentController studentController = StudentController();
   final GlobalKey<FormState> _formfield = GlobalKey<FormState>();
   bool? isLoaded = false;
   bool passToggle = true;
@@ -55,7 +53,7 @@ class _EditStudentPasswordState extends State<EditStudentPassword> {
         // ทำการนำทางไปยังหน้าใหม่ที่คุณต้องการ
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => const DetailStudentProfile(),
+            builder: (context) => const DetailTeacherProfile(),
           ),
         );
       },
@@ -67,7 +65,7 @@ class _EditStudentPasswordState extends State<EditStudentPassword> {
     return Scaffold(
       appBar: kMyAppBar,
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-      endDrawer: const DrawerStudentWidget(),
+      endDrawer: const DrawerTeacherWidget(),
       body: Form(
         key: _formfield,
         child: Column(children: [
@@ -198,8 +196,8 @@ class _EditStudentPasswordState extends State<EditStudentPassword> {
                                 onPressed: () async {
                                   if (_formfield.currentState!.validate()) {
                                     http.Response response =
-                                        await studentController
-                                            .updatePasswordStudent(
+                                        await userController
+                                            .updatePasswordTeacher(
                                                 '${user?.login?.id.toString()}',
                                                 passwordController.text);
 
@@ -229,7 +227,7 @@ class _EditStudentPasswordState extends State<EditStudentPassword> {
                                   Navigator.of(context).pushReplacement(
                                       MaterialPageRoute(
                                           builder: (BuildContext context) {
-                                    return const DetailStudentProfile();
+                                    return const DetailTeacherProfile();
                                   }));
                                 },
                                 child: const Text("ยกเลิก",

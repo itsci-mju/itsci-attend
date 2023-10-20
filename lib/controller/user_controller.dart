@@ -75,4 +75,13 @@ class UserController {
     print(user);
     return user;
   }
+
+  Future updatePasswordTeacher(String loginid, String password) async {
+    Map data = {"loginid": loginid, "password": password};
+    var jsonData = json.encode(data);
+    var url = Uri.parse(baseURL + '/teacher/updatepassword');
+    http.Response response =
+        await http.put(url, headers: headers, body: jsonData);
+    return response;
+  }
 }

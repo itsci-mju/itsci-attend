@@ -74,6 +74,7 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
         scannedData =
             result != null ? result!.code : null; // ดึงข้อมูลจาก result
       });
+      print("ลำดับ 4 ${scannedData} ${regId}");
       if (scannedData != null && regId != null) {
         //หาความต่างของเวลาเพื่อกำหนดสถานะ
         calculateTime(startTime!, checkInTimeForCal!);
@@ -142,6 +143,7 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
     Registration? reg = await registrationController
         .get_RegistrationIdBySectionIdandIdUser(sectionId!, IdUser!);
     regId = reg!.id.toString();
+    print("ลำดับ 3 ${regId}");
   }
 
   void showScanSuccessDialog(BuildContext context) {
@@ -150,33 +152,32 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
       barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
-          title: Text('สแกนสำเร็จ!'),
+          title: const Text('สแกนสำเร็จ!'),
           //content: Text('ค่าที่ได้: $scannedData'),
-          content: Text('การสแกนเสร็จสิ้น'),
+          content: const Text('การสแกนเสร็จสิ้น'),
           actions: [
             TextButton(
-              onPressed: () async {
-                controller!.pauseCamera();
-                // Add ลง Database
-                http.Response response =
-                    await attendanceScheduleController.addAttendanceSchedule(
-                        regId.toString(),
-                        weekNo.toString(),
-                        checkInTime.toString(),
-                        status.toString());
-                if (response.statusCode == 200) {
-                  print("บันทึกการเข้าเรียนสำเร็จ");
-                }
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (BuildContext context) {
-                      return const homeScreenForStudent();
-                    },
-                  ),
-                );
-              },
-              child: const Text('ตกลง'),
-            ),
+                onPressed: () async {
+                  controller!.pauseCamera();
+                  // Add ลง Database
+                  http.Response response =
+                      await attendanceScheduleController.addAttendanceSchedule(
+                          regId.toString(),
+                          weekNo.toString(),
+                          checkInTime.toString(),
+                          status.toString());
+                  if (response.statusCode == 200) {
+                    print("บันทึกการเข้าเรียนสำเร็จ");
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return const homeScreenForStudent();
+                        },
+                      ),
+                    );
+                  }
+                },
+                child: const Text('ตกลง')),
           ],
         );
       },
@@ -190,6 +191,7 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
       builder: (context) {
         return AlertDialog(
           title: const Text('แจ้งเตือน!'),
+          //content: Text('ค่าที่ได้: $scannedData'),
           content: const Text('คุณไม่ได้ลงทะเบียนเรียนรายวิชานี้'),
           actions: [
             TextButton(
@@ -249,6 +251,11 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
             child: Column(children: [
               const SizedBox(height: 10), // ระยะห่างระหว่างข้อความและปุ่ม
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0), // กำหนดมุม
+                  ),
+                ),
                 onPressed: () {
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(

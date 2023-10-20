@@ -3,41 +3,45 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_application_mobiletest2/color.dart';
 import 'package:flutter_application_mobiletest2/controller/attendanceschedule_controller.dart';
+import 'package:flutter_application_mobiletest2/controller/section_controller.dart';
 import 'package:flutter_application_mobiletest2/model/attendanceSchedule.dart';
-import 'package:flutter_application_mobiletest2/screen/widget/drawer_student.dart';
+import 'package:flutter_application_mobiletest2/screen/widget/drawer_teacher.dart';
 import 'package:flutter_application_mobiletest2/screen/widget/mainTextStyle.dart';
 import 'package:flutter_application_mobiletest2/screen/widget/my_abb_bar.dart';
 import 'package:intl/intl.dart';
 
-class AttendanceStudentScreen extends StatefulWidget {
-  final String regId;
-  const AttendanceStudentScreen({super.key, required this.regId});
+class AttendanceTeacherScreen extends StatefulWidget {
+  final String sectionId;
+  const AttendanceTeacherScreen({super.key, required this.sectionId});
 
   @override
-  State<AttendanceStudentScreen> createState() =>
-      _AttendanceStudentScreenState();
+  State<AttendanceTeacherScreen> createState() =>
+      _AttendanceTeacherScreenState();
 }
 
-class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
-  final scaffoldKey = GlobalKey<ScaffoldState>();
+class _AttendanceTeacherScreenState extends State<AttendanceTeacherScreen> {
+  final SectionController sectionController = SectionController();
   final AttendanceScheduleController attendanceScheduleController =
       AttendanceScheduleController();
+  final scaffoldKey = GlobalKey<ScaffoldState>();
   List<Map<String, dynamic>> data = [];
-  bool? isLoaded = false;
   List<AttendanceSchedule>? attendance;
+  bool? isLoaded = false;
+  bool checkInTimeandType = false;
   int? weekNumCheck = 1;
+  int? sectionid;
   String? type;
   String? checkInTime;
-  bool checkInTimeandType = false;
+  String? selectedDropdownValue;
 
-  void showAtten(String regId, int weekNumCheck) async {
+  void showAtten(String week, String secid) async {
     List<AttendanceSchedule> atten = await attendanceScheduleController
-        .listAttendanceScheduleByRegistrationId(regId);
+        .listAttendanceScheduleBySectionIdAndWeek(week, secid);
 
     setState(() {
       attendance = atten;
       data = atten
-          .where((atten) => atten.weekNo == weekNumCheck)
+          .where((atten) => atten.weekNo == int.parse(week))
           .map((atten) => {
                 'subjectid':
                     atten.registration?.section?.course?.subject?.subjectId ??
@@ -63,7 +67,7 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
   @override
   void initState() {
     super.initState();
-    showAtten(widget.regId, weekNumCheck!);
+    showAtten(weekNumCheck!.toString(), widget.sectionId);
   }
 
   String weekNum = '1';
@@ -91,7 +95,7 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
       key: scaffoldKey,
       appBar: kMyAppBar,
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-      endDrawer: const DrawerStudentWidget(),
+      endDrawer: const DrawerTeacherWidget(),
       body: ListView(children: <Widget>[
         Column(
           children: [
@@ -163,7 +167,7 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
                             onChanged: (String? newValue) {
                               setState(() {
                                 weekNum = newValue!;
-                                showAtten(widget.regId, int.parse(weekNum));
+                                showAtten(weekNum, widget.sectionId);
                               });
                             },
                             underline: const SizedBox(),
@@ -233,7 +237,6 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
     );
   }
 
-  // ignore: non_constant_identifier_names
   Widget TimeAndType() {
     if (checkInTimeandType) {
       return Column(

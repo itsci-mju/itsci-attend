@@ -33,7 +33,7 @@ class _homeScreenForStudentState extends State<homeScreenForStudent> {
     //print(username);
     if (username != null) {
       User? user = await userController.get_UserByUsername(username);
-      print(user?.id);
+      //print(user?.id);
       if (user != null) {
         IdUser = user.id.toString();
         userID = user.userid.toString();

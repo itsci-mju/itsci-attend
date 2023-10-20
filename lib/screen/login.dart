@@ -96,7 +96,7 @@ class _loginScreenState extends State<LoginScreen> {
       backgroundColor: maincolor,
       body: Center(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 60),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 60),
           child: Form(
             key: _formfield,
             child: Card(
@@ -116,7 +116,7 @@ class _loginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image(
-                          image: AssetImage("images/mjuicon.png"),
+                          image: const AssetImage("images/mjuicon.png"),
                           height: MediaQuery.of(context).size.width *
                               0.4, // กำหนดความสูงเป็น 40% ของความกว้างของหน้าจอ
                           width: MediaQuery.of(context).size.width *
