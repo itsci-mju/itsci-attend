@@ -38,6 +38,7 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
   String? sectionId;
   String? weekNo;
   String? checkInTime;
+  bool qrexpire = false;
 
   var DateNowCheck;
   String? startTime;
@@ -75,8 +76,8 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
             result != null ? result!.code : null; // ดึงข้อมูลจาก result
       });
       print("ลำดับ 4 ${scannedData} ${regId}");
-      if (scannedData != null && regId != null) {
-        //หาความต่างของเวลาเพื่อกำหนดสถานะ
+
+      if (scannedData != null && regId != null && qrexpire == true) {
         calculateTime(startTime!, checkInTimeForCal!);
         showScanSuccessDialog(context);
       } else {
@@ -116,6 +117,11 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
     print("ลำดับ 2 ");
     List<String> parts = data.split(','); // แยกข้อมูลด้วยตัวอักษร ":"
     if (parts.length >= 2) {
+      List<String> dateTimeparts = parts[0].split(':');
+      String dateTimeSplit = dateTimeparts[1].trim(); //
+      print('dateTimeSplit : $dateTimeSplit');
+      print('datenow : ${DateFormat('HH-mm-ss').format(DateTime.now())}');
+
       List<String> sectionparts = parts[1].split(':');
       String sectionIdSplit = sectionparts[1].trim();
 
@@ -133,6 +139,11 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
           DateFormat('HH-mm-ss').format(DateNowCheck).toString();
       checkInTime =
           DateFormat('dd/MM/yyyy HH:mm:ss').format(DateNowCheck).toString();
+
+      // if(){
+      //   qrexpire = true;
+      // }
+
       // พิมพ์ค่าออกมา
       //print('Section: $section');
       //print('StartTime: $startTime');
