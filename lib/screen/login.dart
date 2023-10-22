@@ -10,7 +10,7 @@ import 'package:flutter_application_mobiletest2/screen/teacher/home_screen.dart'
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:quickalert/quickalert.dart';
-import 'dart:io' show Platform;
+import 'dart:io' show InternetAddressType, NetworkInterface, Platform;
 import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb;
 
 class LoginScreen extends StatefulWidget {

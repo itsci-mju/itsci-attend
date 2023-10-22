@@ -23,24 +23,30 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
   final AttendanceScheduleController attendanceScheduleController =
       AttendanceScheduleController();
   List<Map<String, dynamic>> data = [];
-  bool? isLoaded = false;
   List<AttendanceSchedule>? attendance;
   int? weekNumCheck = 1;
   String? type;
   String? checkInTime;
+  String? userid;
+  String? subjectid;
+  String? subjectName;
+  String? statusCheck;
+  String? formattedTime;
   bool checkInTimeandType = false;
+  bool? isLoaded = false;
 
-  void showAtten(String regId, int weekNumCheck) async {
+  void showAtten(String regId) async {
     List<AttendanceSchedule> atten = await attendanceScheduleController
         .listAttendanceScheduleByRegistrationId(regId);
-
     setState(() {
       attendance = atten;
       data = atten
-          .where((atten) => atten.weekNo == weekNumCheck)
           .map((atten) => {
                 'subjectid':
                     atten.registration?.section?.course?.subject?.subjectId ??
+                        "",
+                'subjectName':
+                    atten.registration?.section?.course?.subject?.subjectName ??
                         "",
                 'userid': atten.registration?.user?.userid ?? "",
                 'weekNo': atten.weekNo ?? "",
@@ -49,8 +55,13 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
                 'type': atten.registration?.section?.type ?? "",
               })
           .toList();
+      userid = data.isNotEmpty ? data[0]['userid'] : null;
+      subjectid = data.isNotEmpty ? data[0]['subjectid'] : null;
+      subjectName = data.isNotEmpty ? data[0]['subjectName'] : null;
+      statusCheck = data.isNotEmpty ? data[0]['status'] : null;
       type = data.isNotEmpty ? data[0]['type'] : null;
       checkInTime = data.isNotEmpty ? data[0]['checkInTime'] : null;
+
       if (checkInTime != null && type != null) {
         checkInTimeandType = true;
       } else {
@@ -63,27 +74,8 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
   @override
   void initState() {
     super.initState();
-    showAtten(widget.regId, weekNumCheck!);
+    showAtten(widget.regId);
   }
-
-  String weekNum = '1';
-  var weekNumItems = [
-    '1',
-    '2',
-    '3',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8',
-    '9',
-    '10',
-    '11',
-    '12',
-    '13',
-    '14',
-    '15',
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -106,126 +98,113 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
                 //color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(10),
               ),
+              width: MediaQuery.of(context).size.width * 0.9,
               child: Column(
                 children: [
-                  const Text("การเข้าเรียน",
-                      style: CustomTextStyle.TextGeneral),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  TimeAndType(),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text("สัปดาห์ที่ ",
-                          style: CustomTextStyle.TextGeneral),
-                      Container(
-                        width: 100,
-                        height: 40,
-                        alignment: Alignment.center,
-                        child: Card(
-                          elevation: 3,
-                          color: const Color.fromARGB(255, 255, 255, 255),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: DropdownButton<String>(
-                            isExpanded: true,
-                            value: weekNum,
-                            style: const TextStyle(
-                              fontSize: 15,
-                            ),
-                            icon: const Padding(
-                              padding: EdgeInsets.only(
-                                  right:
-                                      20), // กำหนดการเว้นระหว่างไอคอนและเนื้อหาที่นี่
-                              child: Icon(Icons.keyboard_arrow_down),
-                            ), // กำหนดไอคอนที่นี่
-                            iconSize: 24, // ขนาดของไอคอน
-                            iconEnabledColor: Colors.black,
-                            items: weekNumItems.map(
-                              (String weekNumItems) {
-                                return DropdownMenuItem(
-                                  value: weekNumItems,
-                                  child: Center(
-                                    child: Text(
-                                      "$weekNumItems",
-                                      style:
-                                          const TextStyle(color: Colors.black),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ).toList(),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                weekNum = newValue!;
-                                showAtten(widget.regId, int.parse(weekNum));
-                              });
-                            },
-                            underline: const SizedBox(),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  AttenHeader(),
                 ],
-              ),
+              ), // ปรับความกว้างของ Container ตามขนาดของหน้าจอ
             ),
             const SizedBox(
               height: 15,
             ),
             Column(
-              children: data.map((item) {
-                final checkInTime =
-                    DateTime.parse(item['checkInTime']).toLocal();
-                final timeFormatter = DateFormat('HH:mm:ss');
-                final formattedTime = timeFormatter.format(checkInTime);
-                return Container(
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    children: [
-                      Text("วิชา: ${item['subjectid']}",
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
-                      Text("รหัสนักศึกษา: ${item['userid']}",
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text("สถานะ: ",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              )),
-                          Text(
-                            "${item['status']}",
+              children: List<Widget>.generate(15, (week) {
+                final weekNumber = week + 1;
+                final weekText = 'สัปดาห์ $weekNumber';
+                final hasDataForWeek =
+                    data.any((item) => item['weekNo'] == weekNumber);
+                if (hasDataForWeek) {
+                  // หาสถานะของแต่ละสัปดาห์
+                  final weekStatus =
+                      data.firstWhere((item) => item['weekNo'] == weekNumber);
+                  final status = weekStatus['status'];
+                  // กำหนดค่า statusCheck ตามสถานะของสัปดาห์นี้
+                  statusCheck = status;
+
+                  // หาเวลาของแต่ละสัปดาห์
+                  final weekcheckInTime =
+                      data.firstWhere((item) => item['weekNo'] == weekNumber);
+                  if (weekcheckInTime != null) {
+                    final findCheckInTime =
+                        DateTime.parse(weekcheckInTime['checkInTime'])
+                            .toLocal();
+                    final timeFormatter = DateFormat('HH:mm:ss');
+                    formattedTime = timeFormatter.format(findCheckInTime);
+                  }
+                }
+
+                IconData iconData = Icons.info;
+                Color iconColor = Colors.black;
+                if (statusCheck == 'เข้าเรียนปกติ') {
+                  iconData = Icons.check_circle;
+                  iconColor = Colors.green;
+                } else if (statusCheck == 'เข้าเรียนสาย') {
+                  iconData = Icons.access_time;
+                  iconColor = Colors.orange;
+                } else if (statusCheck == 'ขาดเรียน') {
+                  iconData = Icons.cancel;
+                  iconColor = Colors.red;
+                } else {
+                  iconData = Icons.info;
+                  iconColor = Colors.black;
+                }
+
+                if (hasDataForWeek) {
+                  return Container(
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      children: [
+                        Text(weekText,
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
+                        const Text(" สถานะ: ",
                             style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: getColorForStatus(item['status']),
-                            ),
-                          )
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text("เวลาเข้าเรียน: $formattedTime",
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                    ],
-                  ),
-                );
-              }).toList(),
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black)),
+                        Icon(
+                          iconData,
+                          color: iconColor,
+                        ),
+                        Text(" เวลา: $formattedTime",
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  );
+                } else {
+                  return Container(
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      children: [
+                        Text(weekText,
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
+                        const Text(" สถานะ: ",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black)),
+                        const Icon(
+                          Icons.info,
+                          color: Colors.black,
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              }),
             ),
           ],
         )
@@ -234,10 +213,24 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
   }
 
   // ignore: non_constant_identifier_names
-  Widget TimeAndType() {
+  Widget AttenHeader() {
     if (checkInTimeandType) {
       return Column(
         children: [
+          const Text("การเข้าเรียน", style: CustomTextStyle.TextGeneral),
+          const SizedBox(
+            height: 5,
+          ),
+          Text("รหัสนักศึกษา: ${userid ?? ""}",
+              style: CustomTextStyle.TextGeneral),
+          const SizedBox(
+            height: 5,
+          ),
+          Text("รหัสวิชา: ${subjectid ?? ""}",
+              style: CustomTextStyle.TextGeneral),
+          const SizedBox(
+            height: 5,
+          ),
           Text("ประเภท: ${type ?? ""}", style: CustomTextStyle.TextGeneral),
           const SizedBox(
             height: 5,
@@ -250,17 +243,5 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
     } else {
       return const SizedBox.shrink();
     }
-  }
-}
-
-Color getColorForStatus(String status) {
-  if (status == "เข้าเรียนปกติ") {
-    return Colors.green; // สีเขียวสำหรับ "เข้าเรียนปกติ"
-  } else if (status == "เข้าเรียนสาย") {
-    return Colors.orange; // สีส้มสำหรับ "เข้าเรียนสาย"
-  } else if (status == "ขาดเรียน") {
-    return Colors.red; // สีแดงสำหรับ "ขาด"
-  } else {
-    return Colors.black; // สีดำหากไม่ระบุสี
   }
 }

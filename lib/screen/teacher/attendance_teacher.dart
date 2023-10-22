@@ -33,6 +33,8 @@ class _AttendanceTeacherScreenState extends State<AttendanceTeacherScreen> {
   String? type;
   String? checkInTime;
   String? selectedDropdownValue;
+  String? subjectid;
+  String? statusCheck;
 
   void showAtten(String week, String secid) async {
     List<AttendanceSchedule> atten = await attendanceScheduleController
@@ -53,6 +55,7 @@ class _AttendanceTeacherScreenState extends State<AttendanceTeacherScreen> {
                 'type': atten.registration?.section?.type ?? "",
               })
           .toList();
+      subjectid = data.isNotEmpty ? data[0]['subjectid'] : null;
       type = data.isNotEmpty ? data[0]['type'] : null;
       checkInTime = data.isNotEmpty ? data[0]['checkInTime'] : null;
       if (checkInTime != null && type != null) {
@@ -112,15 +115,7 @@ class _AttendanceTeacherScreenState extends State<AttendanceTeacherScreen> {
               ),
               child: Column(
                 children: [
-                  const Text("การเข้าเรียน",
-                      style: CustomTextStyle.TextGeneral),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  TimeAndType(),
-                  const SizedBox(
-                    height: 5,
-                  ),
+                  AttenHeader(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -188,6 +183,22 @@ class _AttendanceTeacherScreenState extends State<AttendanceTeacherScreen> {
                     DateTime.parse(item['checkInTime']).toLocal();
                 final timeFormatter = DateFormat('HH:mm:ss');
                 final formattedTime = timeFormatter.format(checkInTime);
+                String statusCheck = item['status'];
+                IconData iconData = Icons.info;
+                Color iconColor = Colors.black;
+                if (statusCheck == 'เข้าเรียนปกติ') {
+                  iconData = Icons.check_circle;
+                  iconColor = Colors.green;
+                } else if (statusCheck == 'เข้าเรียนสาย') {
+                  iconData = Icons.access_time;
+                  iconColor = Colors.orange;
+                } else if (statusCheck == 'ขาดเรียน') {
+                  iconData = Icons.cancel;
+                  iconColor = Colors.red;
+                } else {
+                  iconData = Icons.info;
+                  iconColor = Colors.black;
+                }
                 return Container(
                   margin:
                       const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
@@ -196,36 +207,27 @@ class _AttendanceTeacherScreenState extends State<AttendanceTeacherScreen> {
                     color: Colors.grey[300],
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Column(
+                  child: Row(
                     children: [
-                      Text("วิชา: ${item['subjectid']}",
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
                       Text("รหัสนักศึกษา: ${item['userid']}",
                           style: const TextStyle(fontWeight: FontWeight.bold)),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text("สถานะ: ",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              )),
-                          Text(
-                            "${item['status']}",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: getColorForStatus(item['status']),
-                            ),
-                          )
-                        ],
+                      const Text(" สถานะ: ",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          )),
+                      Icon(
+                        iconData,
+                        color: iconColor,
                       ),
-                      Row(
+
+                      /*Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text("เวลาเข้าเรียน: $formattedTime",
                               style:
                                   const TextStyle(fontWeight: FontWeight.bold)),
                         ],
-                      ),
+                      ),*/
                     ],
                   ),
                 );
@@ -237,10 +239,19 @@ class _AttendanceTeacherScreenState extends State<AttendanceTeacherScreen> {
     );
   }
 
-  Widget TimeAndType() {
+  Widget AttenHeader() {
     if (checkInTimeandType) {
       return Column(
         children: [
+          const Text("การเข้าเรียน", style: CustomTextStyle.TextHeadBar),
+          const SizedBox(
+            height: 5,
+          ),
+          Text("รหัสวิชา: ${subjectid ?? ""}",
+              style: CustomTextStyle.TextGeneral),
+          const SizedBox(
+            height: 5,
+          ),
           Text("ประเภท: ${type ?? ""}", style: CustomTextStyle.TextGeneral),
           const SizedBox(
             height: 5,
