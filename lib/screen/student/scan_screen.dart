@@ -38,15 +38,17 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
   String? sectionId;
   String? weekNo;
   String? checkInTime;
-  bool qrexpire = false;
+  String? status;
+  bool qrExpire = true;
 
   var DateNowCheck;
   String? startTime;
   String? checkInTimeForCal;
   var startTimeMinInt = 0.0;
   var checkTimeMinInt = 0.0;
+  var timeGenQRSecondsInt = 0.0;
+  var checkTimeSecondsInt = 0.0;
   var timeResult;
-  String? status;
 
   void fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -66,24 +68,51 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
     }
   }
 
-  void onQRViewCamera(QRViewController controller) {
-    this.controller = controller;
-    controller.scannedDataStream.listen((scanData) async {
-      splitData(scanData.code.toString());
-      setState(() {
-        result = scanData;
-        scannedData =
-            result != null ? result!.code : null; // ดึงข้อมูลจาก result
-      });
-      print("ลำดับ 4 ${scannedData} ${regId}");
+  Future<void> splitData(String data) async {
+    print(data);
+    print("ลำดับ 2 ");
+    List<String> parts = data.split(','); // แยกข้อมูลด้วยตัวอักษร ":"
+    if (parts.length >= 2) {
+      List<String> dateTimeparts = parts[0].split(':');
+      String dateTimeSplit = dateTimeparts[1].trim(); //
+      //print('dateTimeSplit : $dateTimeSplit');
+      //print('dateNow : ${DateFormat('dd-MM-yyyy').format(DateTime.now())}');
 
-      if (scannedData != null && regId != null && qrexpire == true) {
-        calculateTime(startTime!, checkInTimeForCal!);
-        showScanSuccessDialog(context);
-      } else {
-        showScanUserNotInSectionDialog(context);
-      }
-    });
+      List<String> timeTimeparts = parts[1].split(':');
+      String timeTimeSplit = timeTimeparts[1].trim(); //
+      //print('timeTimeSplit : $timeTimeSplit');
+      //print('timeNow : ${DateFormat('HH-mm-ss').format(DateTime.now())}');
+
+      List<String> sectionparts = parts[2].split(':');
+      String sectionIdSplit = sectionparts[1].trim();
+
+      List<String> startTimeparts = parts[3].split(':');
+      String startTimeSplit = startTimeparts[1].trim();
+
+      List<String> weekparts = parts[4].split(':');
+      String weekNoSplit = weekparts[1].trim();
+
+      List<String> timelimitparts = parts[5].split(':');
+      String timelimitSplit = timelimitparts[1].trim();
+
+      sectionId = sectionIdSplit;
+      startTime = startTimeSplit;
+      weekNo = weekNoSplit;
+      DateNowCheck = DateTime.now();
+      String checkInDateForCal =
+          DateFormat('dd-MM-yyyy').format(DateNowCheck).toString();
+      checkInTimeForCal =
+          DateFormat('HH-mm-ss').format(DateNowCheck).toString();
+      checkInTime =
+          DateFormat('dd/MM/yyyy HH:mm:ss').format(DateNowCheck).toString();
+      qrCheckExpire(dateTimeSplit, checkInDateForCal, timeTimeSplit,
+          checkInTimeForCal!, timelimitSplit);
+      // พิมพ์ค่าออกมา
+      //print('Section: $section');
+      //print('StartTime: $startTime');
+      //print('Week: $week');
+      //print( 'DateNow:${DateFormat('HH-mm-ss').format(DateTime.now()).toString()}');
+    }
   }
 
   void calculateTime(String startTime, String checkInTime) {
@@ -112,49 +141,59 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
     print("TestStatus ${status}");*/
   }
 
-  Future<void> splitData(String data) async {
-    print(data);
-    print("ลำดับ 2 ");
-    List<String> parts = data.split(','); // แยกข้อมูลด้วยตัวอักษร ":"
-    if (parts.length >= 2) {
-      List<String> dateTimeparts = parts[0].split(':');
-      String dateTimeSplit = dateTimeparts[1].trim(); //
-      print('dateTimeSplit : $dateTimeSplit');
-      print('datenow : ${DateFormat('HH-mm-ss').format(DateTime.now())}');
+  void qrCheckExpire(String dateGenQR, String checkInDate, String timeGenQR,
+      String checkInTime, String timeLimit) {
+    List<String> timeGenQRTrim = timeGenQR.split('-');
+    List<String> checkTimeTrim = checkInTime.split('-');
 
-      List<String> sectionparts = parts[1].split(':');
-      String sectionIdSplit = sectionparts[1].trim();
+    timeGenQRSecondsInt = (double.parse(timeGenQRTrim[0]) * 3600) +
+        (double.parse(timeGenQRTrim[1]) * 60) +
+        double.parse(timeGenQRTrim[2]);
+    checkTimeSecondsInt = (double.parse(checkTimeTrim[0]) * 3600) +
+        (double.parse(checkTimeTrim[1]) * 60) +
+        double.parse(checkTimeTrim[2]);
 
-      List<String> startTimeparts = parts[2].split(':');
-      String startTimeSplit = startTimeparts[1].trim();
-
-      List<String> weekparts = parts[3].split(':');
-      String weekNoSplit = weekparts[1].trim();
-
-      sectionId = sectionIdSplit;
-      startTime = startTimeSplit;
-      weekNo = weekNoSplit;
-      DateNowCheck = DateTime.now();
-      checkInTimeForCal =
-          DateFormat('HH-mm-ss').format(DateNowCheck).toString();
-      checkInTime =
-          DateFormat('dd/MM/yyyy HH:mm:ss').format(DateNowCheck).toString();
-
-      // if(){
-      //   qrexpire = true;
-      // }
-
-      // พิมพ์ค่าออกมา
-      //print('Section: $section');
-      //print('StartTime: $startTime');
-      //print('Week: $week');
-      //print( 'DateNow:${DateFormat('HH-mm-ss').format(DateTime.now()).toString()}');
+    //หา QR หมดอายุหรือยัง
+    timeResult = checkTimeSecondsInt - timeGenQRSecondsInt;
+    if (dateGenQR == checkInDate && timeResult <= int.parse(timeLimit)) {
+      qrExpire = false;
     }
-    //หาค่า Id ของ registration
-    Registration? reg = await registrationController
-        .get_RegistrationIdBySectionIdandIdUser(sectionId!, IdUser!);
-    regId = reg!.id.toString();
-    print("ลำดับ 3 ${regId}");
+    print("TestDateGenQR ${dateGenQR}");
+    print("TestcheckInDate ${checkInDate}");
+    print("TestTimeLimit ${int.parse(timeLimit)}");
+    print("TestCheckTimeMinInt ${checkTimeSecondsInt}");
+    print("TestTimeGenQRMinInt ${timeGenQRSecondsInt}");
+    print("TestResult ${timeResult}");
+    //print("TestStatus ${status}");
+  }
+
+  void onQRViewCamera(QRViewController controller) {
+    this.controller = controller;
+    controller.scannedDataStream.listen((scanData) async {
+      setState(() {
+        result = scanData;
+        scannedData =
+            result != null ? result!.code : null; // ดึงข้อมูลจาก result
+      });
+      //print("ลำดับ 4 ${scannedData} ${regId}");
+      splitData(scanData.code.toString());
+      //หาค่า Id ของ registration
+      Registration? reg = await registrationController
+          .get_RegistrationIdBySectionIdandIdUser(sectionId!, IdUser!);
+      regId = reg!.id.toString();
+      //print("ลำดับ 3 ${regId}");
+      if (scannedData != null && regId != null) {
+        if (qrExpire == false) {
+          qrExpire = true;
+          calculateTime(startTime!, checkInTimeForCal!);
+          showScanSuccessDialog(context);
+        } else {
+          showQRCodeExpireDialog(context);
+        }
+      } else {
+        showScanUserNotInSectionDialog(context);
+      }
+    });
   }
 
   void showScanSuccessDialog(BuildContext context) {
@@ -207,6 +246,35 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
           actions: [
             TextButton(
               onPressed: () async {
+                controller!.pauseCamera();
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return const homeScreenForStudent();
+                    },
+                  ),
+                );
+              },
+              child: const Text('ตกลง'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showQRCodeExpireDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('แจ้งเตือน!'),
+          //content: Text('ค่าที่ได้: $scannedData'),
+          content: const Text('QR Code หมดอายุแล้ว!!'),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                controller!.pauseCamera();
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (BuildContext context) {

@@ -28,6 +28,7 @@ class _AttendanceTeacherScreenState extends State<AttendanceTeacherScreen> {
   List<AttendanceSchedule>? attendance;
   bool? isLoaded = false;
   bool checkInTimeandType = false;
+  late List<bool> isMark1ClickedList;
   int? weekNumCheck = 1;
   int? sectionid;
   String? type;
@@ -55,6 +56,7 @@ class _AttendanceTeacherScreenState extends State<AttendanceTeacherScreen> {
                 'type': atten.registration?.section?.type ?? "",
               })
           .toList();
+      isMark1ClickedList = List.generate(data.length, (index) => false);
       subjectid = data.isNotEmpty ? data[0]['subjectid'] : null;
       type = data.isNotEmpty ? data[0]['type'] : null;
       checkInTime = data.isNotEmpty ? data[0]['checkInTime'] : null;
@@ -70,6 +72,7 @@ class _AttendanceTeacherScreenState extends State<AttendanceTeacherScreen> {
   @override
   void initState() {
     super.initState();
+    isMark1ClickedList = List.generate(data.length, (index) => false);
     showAtten(weekNumCheck!.toString(), widget.sectionId);
   }
 
@@ -115,6 +118,11 @@ class _AttendanceTeacherScreenState extends State<AttendanceTeacherScreen> {
               ),
               child: Column(
                 children: [
+                  const Text("การเข้าเรียน",
+                      style: CustomTextStyle.TextHeadBar),
+                  const SizedBox(
+                    height: 5,
+                  ),
                   AttenHeader(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -178,11 +186,17 @@ class _AttendanceTeacherScreenState extends State<AttendanceTeacherScreen> {
               height: 15,
             ),
             Column(
-              children: data.map((item) {
+              children: data.asMap().entries.map((entry) {
+                final index = entry.key;
+                final item = entry.value;
                 final checkInTime =
                     DateTime.parse(item['checkInTime']).toLocal();
                 final timeFormatter = DateFormat('HH:mm:ss');
-                final formattedTime = timeFormatter.format(checkInTime);
+                final hours = checkInTime.hour;
+                final minutes = checkInTime.minute;
+                final seconds = checkInTime.second;
+                final formattedTime =
+                    '$hours นาฬิกา $minutes นาที $seconds วินาที';
                 String statusCheck = item['status'];
                 IconData iconData = Icons.info;
                 Color iconColor = Colors.black;
@@ -199,40 +213,63 @@ class _AttendanceTeacherScreenState extends State<AttendanceTeacherScreen> {
                   iconData = Icons.info;
                   iconColor = Colors.black;
                 }
-                return Container(
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Row(
-                    children: [
-                      Text("รหัสนักศึกษา: ${item['userid']}",
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
-                      const Text(" สถานะ: ",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          )),
-                      Icon(
-                        iconData,
-                        color: iconColor,
-                      ),
-
-                      /*Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text("เวลาเข้าเรียน: $formattedTime",
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold)),
-                        ],
-                      ),*/
-                    ],
+                return GestureDetector(
+                  onTap: () {
+                    // Handle the container tap here
+                    // Loop through all containers and hide the others
+                    setState(() {
+                      for (var i = 0; i < isMark1ClickedList.length; i++) {
+                        if (i == index) {
+                          isMark1ClickedList[i] = !isMark1ClickedList[i];
+                        } else {
+                          isMark1ClickedList[i] = false;
+                        }
+                      }
+                    });
+                  },
+                  child: Container(
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Text("รหัสนักศึกษา: ${item['userid']}",
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold)),
+                            const Text(" สถานะ: ",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                )),
+                            Icon(
+                              iconData,
+                              color: iconColor,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 5),
+                        Visibility(
+                          visible: isMark1ClickedList[index],
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text("เวลาเข้าเรียน: $formattedTime",
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold)),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               }).toList(),
-            ),
+            )
           ],
         )
       ]),
@@ -243,10 +280,6 @@ class _AttendanceTeacherScreenState extends State<AttendanceTeacherScreen> {
     if (checkInTimeandType) {
       return Column(
         children: [
-          const Text("การเข้าเรียน", style: CustomTextStyle.TextHeadBar),
-          const SizedBox(
-            height: 5,
-          ),
           Text("รหัสวิชา: ${subjectid ?? ""}",
               style: CustomTextStyle.TextGeneral),
           const SizedBox(
@@ -264,17 +297,5 @@ class _AttendanceTeacherScreenState extends State<AttendanceTeacherScreen> {
     } else {
       return const SizedBox.shrink();
     }
-  }
-}
-
-Color getColorForStatus(String status) {
-  if (status == "เข้าเรียนปกติ") {
-    return Colors.green; // สีเขียวสำหรับ "เข้าเรียนปกติ"
-  } else if (status == "เข้าเรียนสาย") {
-    return Colors.orange; // สีส้มสำหรับ "เข้าเรียนสาย"
-  } else if (status == "ขาดเรียน") {
-    return Colors.red; // สีแดงสำหรับ "ขาด"
-  } else {
-    return Colors.black; // สีดำหากไม่ระบุสี
   }
 }
