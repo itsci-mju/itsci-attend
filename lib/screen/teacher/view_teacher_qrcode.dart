@@ -151,100 +151,117 @@ class _TeacherGenerateQRState extends State<TeacherGenerateQR> {
       /*appBar: kMyAppBar,
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       endDrawer: const DrawerTeacherWidget(),*/
-      body: ListView(children: [
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-            child: Column(children: [
-              const Text("เลือกสัปดาห์เพื่อสร้าง QR Code",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("สัปดาห์ที่ ",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                  Container(
-                    width: 100,
-                    height: 40,
-                    alignment: Alignment.center,
-                    child: Card(
-                      elevation: 3,
-                      color: const Color.fromARGB(255, 255, 255, 255),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: DropdownButton<String>(
-                        isExpanded: true,
-                        value: selectedDropdownValue,
-                        style: const TextStyle(
-                          fontSize: 15,
-                        ),
-                        icon: const Padding(
-                          padding: EdgeInsets.only(right: 10),
-                          child: Icon(Icons.keyboard_arrow_down),
-                        ), // กำหนดไอคอนที่นี่
-                        iconSize: 24, // ขนาดของไอคอน
-                        iconEnabledColor: Colors.black,
-                        onChanged: onChangedDropdown,
-                        items: dropdownItems
-                            .map<DropdownMenuItem<String>>((String item) {
-                          return DropdownMenuItem<String>(
-                            value: item,
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 20), // ใส่ Padding ทางซ้าย
-                              child: Text(
-                                item,
-                                style: const TextStyle(color: Colors.black),
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                        underline: const SizedBox(),
-                      ),
-                    ),
+      body: isLoaded == false
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: const [
+                Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(maincolor),
                   ),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Center(
-                child: buildQRCodeWidget(),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Container(
-                width: 200, // กำหนดความกว้างของปุ่ม
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: maincolor, // กำหนดสีพื้นหลังของปุ่ม
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0), // กำหนดมุม
-                    ),
-                  ),
-                  onPressed: () async {
-                    await Future.delayed(Duration
-                        .zero); // รอเวลาเล็กน้อยก่อนไปหน้า DetailRoomScreen
-                    Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (BuildContext context) {
-                      return const ListClassTeacherScreen();
-                    }));
-                  },
-                  child: const Text("กลับหน้ารายวิชา",
-                      style: CustomTextStyle.TextGeneral),
                 ),
-              ),
+              ],
+            )
+          : ListView(children: [
+              Center(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                  child: Column(children: [
+                    const Text("เลือกสัปดาห์เพื่อสร้าง QR Code",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20)),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text("สัปดาห์ที่ ",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20)),
+                        Container(
+                          width: 100,
+                          height: 40,
+                          alignment: Alignment.center,
+                          child: Card(
+                            elevation: 3,
+                            color: const Color.fromARGB(255, 255, 255, 255),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: DropdownButton<String>(
+                              isExpanded: true,
+                              value: selectedDropdownValue,
+                              style: const TextStyle(
+                                fontSize: 15,
+                              ),
+                              icon: const Padding(
+                                padding: EdgeInsets.only(right: 10),
+                                child: Icon(Icons.keyboard_arrow_down),
+                              ), // กำหนดไอคอนที่นี่
+                              iconSize: 24, // ขนาดของไอคอน
+                              iconEnabledColor: Colors.black,
+                              onChanged: onChangedDropdown,
+                              items: dropdownItems
+                                  .map<DropdownMenuItem<String>>((String item) {
+                                return DropdownMenuItem<String>(
+                                  value: item,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 20), // ใส่ Padding ทางซ้าย
+                                    child: Text(
+                                      item,
+                                      style:
+                                          const TextStyle(color: Colors.black),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                              underline: const SizedBox(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                      child: buildQRCodeWidget(),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      width: 200, // กำหนดความกว้างของปุ่ม
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: maincolor, // กำหนดสีพื้นหลังของปุ่ม
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(20.0), // กำหนดมุม
+                          ),
+                        ),
+                        onPressed: () async {
+                          await Future.delayed(Duration
+                              .zero); // รอเวลาเล็กน้อยก่อนไปหน้า DetailRoomScreen
+                          Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) {
+                            return const ListClassTeacherScreen();
+                          }));
+                        },
+                        child: const Text("กลับหน้ารายวิชา",
+                            style: CustomTextStyle.TextGeneral),
+                      ),
+                    ),
+                  ]),
+                ),
+              )
             ]),
-          ),
-        )
-      ]),
     );
   }
 

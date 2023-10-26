@@ -67,108 +67,123 @@ class _DetailTeacherProfileState extends State<DetailTeacherProfile> {
       appBar: kMyAppBar,
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       endDrawer: const DrawerTeacherWidget(),
-      body: Form(
-        key: _formfield,
-        child: Column(children: [
-          Center(
-            child: Column(children: const [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-              ),
-              Icon(
-                Icons.person,
-                size: 100,
-                color: maincolor,
-              ),
-            ]),
-          ),
-          Column(children: [
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-              padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
-              decoration: BoxDecoration(
-                //color: maincolor,
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(50),
-              ),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      "ชื่อ : ${user?.fname ?? ""}",
-                      style: const TextStyle(fontSize: 15),
+      body: isLoaded == false
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: const [
+                Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(maincolor),
+                  ),
+                ),
+              ],
+            )
+          : Form(
+              key: _formfield,
+              child: Column(children: [
+                Center(
+                  child: Column(children: const [
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                     ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      "นามสกุล : ${user?.lname ?? ""}",
-                      style: const TextStyle(fontSize: 15),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      "อีเมล : ${user?.email ?? ""}",
-                      style: const TextStyle(fontSize: 15),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      "ชื่อผู้ใช้ : ${user?.login?.username ?? ""}",
-                      style: const TextStyle(fontSize: 15),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      "เพศ : ${user?.gender ?? ""}",
-                      style: const TextStyle(fontSize: 15),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      "วัน เดือน ปี ที่เกิด : ${DateFormat('dd/MM/yyyy').format(selecteData)}",
-                      style: const TextStyle(fontSize: 15),
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Center(
-                      child: Container(
-                        width: 150, // กำหนดความกว้างของปุ่ม
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(20.0), // กำหนดมุม
-                            ),
-                          ),
-                          onPressed: () async {
-                            await Future.delayed(Duration
-                                .zero); // รอเวลาเล็กน้อยก่อนไปหน้า DetailRoomScreen
-                            Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) {
-                              return EditTeacherPassword(
-                                  id: '${user?.id.toString()}');
-                            }));
-                          },
-                          child: const Text("แก้ไขรหัสผ่าน"),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 15,
+                    Icon(
+                      Icons.person,
+                      size: 100,
+                      color: maincolor,
                     ),
                   ]),
-            )
-          ]),
-        ]),
-      ),
+                ),
+                Column(children: [
+                  Container(
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                    padding:
+                        const EdgeInsets.only(left: 40, right: 40, top: 20),
+                    decoration: BoxDecoration(
+                      //color: maincolor,
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            "ชื่อ : ${user?.fname ?? ""}",
+                            style: const TextStyle(fontSize: 15),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            "นามสกุล : ${user?.lname ?? ""}",
+                            style: const TextStyle(fontSize: 15),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            "อีเมล : ${user?.email ?? ""}",
+                            style: const TextStyle(fontSize: 15),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            "ชื่อผู้ใช้ : ${user?.login?.username ?? ""}",
+                            style: const TextStyle(fontSize: 15),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            "เพศ : ${user?.gender ?? ""}",
+                            style: const TextStyle(fontSize: 15),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            "วัน เดือน ปี ที่เกิด : ${DateFormat('dd/MM/yyyy').format(selecteData)}",
+                            style: const TextStyle(fontSize: 15),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          Center(
+                            child: Container(
+                              width: 150, // กำหนดความกว้างของปุ่ม
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.circular(20.0), // กำหนดมุม
+                                  ),
+                                ),
+                                onPressed: () async {
+                                  await Future.delayed(Duration
+                                      .zero); // รอเวลาเล็กน้อยก่อนไปหน้า DetailRoomScreen
+                                  Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(
+                                          builder: (BuildContext context) {
+                                    return EditTeacherPassword(
+                                        id: '${user?.id.toString()}');
+                                  }));
+                                },
+                                child: const Text("แก้ไขรหัสผ่าน"),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                        ]),
+                  )
+                ]),
+              ]),
+            ),
     );
   }
 }

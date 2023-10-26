@@ -93,103 +93,128 @@ class _ListSubjectStudentScreenState extends State<ListSubjectStudentScreen> {
       appBar: kMyAppBar,
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       endDrawer: const DrawerStudentWidget(),
-      body: ListView(
-        children: <Widget>[
-          Column(
-            children: [
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-              ),
-              const Text(
-                "เลือกรายวิชาที่ต้องการดูการเข้าเรียน",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              for (var item in data)
-                Container(
-                  width: 330,
-                  //height: 100,
-                  child: Card(
-                    elevation: 10,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(35),
+      body: isLoaded == false
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: const [
+                Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(maincolor),
+                  ),
+                ),
+              ],
+            )
+          : ListView(
+              children: <Widget>[
+                Column(
+                  children: [
+                    const Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                     ),
-                    color: maincolor,
-                    child: InkWell(
-                      onTap: () async {
-                        //print(item['id'].toString());
-                        await Future.delayed(Duration
-                            .zero); // รอเวลาเล็กน้อยก่อนไปหน้า DetailRoomScreen
-                        Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (BuildContext context) {
-                          return AttendanceStudentScreen(
-                            regId: item['id'].toString(),
-                          );
-                        }));
-                      },
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ListTile(
-                              title: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Column(
-                                    children: [
-                                      Text("${item['subjectid']} ",
-                                          style: CustomTextStyle.TextGeneral),
-                                      Text(
-                                        " ${item['subjectname']}",
-                                        style: CustomTextStyle.TextGeneral,
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines:
-                                            2, // กำหนดจำนวนบรรทัดสูงสุดที่แสดง
-                                        textAlign: TextAlign
-                                            .center, // จัดให้อยู่ตรงกลาง,
-                                      )
-                                    ],
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text("กลุ่ม: ${item['group']} ",
-                                          style: CustomTextStyle.TextGeneral),
-                                      Text(" ประเภท: ${item['type']}",
-                                          style: CustomTextStyle.TextGeneral),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                          "${item['startTime'] != null ? item['startTime'].substring(0, 5) : 'N/A'}",
-                                          style: CustomTextStyle.TextGeneral),
-                                      const Text(" - ",
-                                          style: CustomTextStyle.TextGeneral),
-                                      Text(
-                                        "${addTime(item['startTime'].substring(0, 5), item['duration'])}",
-                                        style: CustomTextStyle.TextGeneral,
-                                      ),
-                                    ],
+                    const Text(
+                      "เลือกรายวิชาที่ต้องการดูการเข้าเรียน",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    for (var item in data)
+                      Container(
+                        width: 330,
+                        //height: 100,
+                        child: Card(
+                          elevation: 10,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(35),
+                          ),
+                          color: maincolor,
+                          child: InkWell(
+                            onTap: () async {
+                              //print(item['id'].toString());
+                              await Future.delayed(Duration
+                                  .zero); // รอเวลาเล็กน้อยก่อนไปหน้า DetailRoomScreen
+                              Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                      builder: (BuildContext context) {
+                                return AttendanceStudentScreen(
+                                  regId: item['id'].toString(),
+                                );
+                              }));
+                            },
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ListTile(
+                                    title: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: <Widget>[
+                                        Column(
+                                          children: [
+                                            Text("${item['subjectid']} ",
+                                                style: CustomTextStyle
+                                                    .TextGeneral),
+                                            Text(
+                                              " ${item['subjectname']}",
+                                              style:
+                                                  CustomTextStyle.TextGeneral,
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines:
+                                                  2, // กำหนดจำนวนบรรทัดสูงสุดที่แสดง
+                                              textAlign: TextAlign
+                                                  .center, // จัดให้อยู่ตรงกลาง,
+                                            )
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text("กลุ่ม: ${item['group']} ",
+                                                style: CustomTextStyle
+                                                    .TextGeneral),
+                                            Text(" ประเภท: ${item['type']}",
+                                                style: CustomTextStyle
+                                                    .TextGeneral),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 5),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                                "${item['startTime'] != null ? item['startTime'].substring(0, 5) : 'N/A'}",
+                                                style: CustomTextStyle
+                                                    .TextGeneral),
+                                            const Text(" - ",
+                                                style: CustomTextStyle
+                                                    .TextGeneral),
+                                            Text(
+                                              "${addTime(item['startTime'].substring(0, 5), item['duration'])}",
+                                              style:
+                                                  CustomTextStyle.TextGeneral,
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
-                          ],
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                ),
-            ],
-          )
-        ],
-      ),
+                  ],
+                )
+              ],
+            ),
     );
   }
 }

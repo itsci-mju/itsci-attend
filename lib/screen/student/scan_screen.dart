@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_mobiletest2/color.dart';
 import 'package:flutter_application_mobiletest2/controller/attendanceschedule_controller.dart';
 import 'package:flutter_application_mobiletest2/controller/registration_controller.dart';
 import 'package:flutter_application_mobiletest2/controller/user_controller.dart';
@@ -316,41 +317,53 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            flex: 5,
-            child: QRView(
-              key: qrKey,
-              onQRViewCreated: onQRViewCamera,
-            ),
-          ),
-          Expanded(
-              child: Center(
-            child: Column(children: [
-              const SizedBox(height: 10), // ระยะห่างระหว่างข้อความและปุ่ม
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0), // กำหนดมุม
+      body: isLoaded == false
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: const [
+                Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(maincolor),
                   ),
                 ),
-                onPressed: () {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (BuildContext context) {
-                        // ตรงนี้คุณสามารถกำหนดหน้าที่คุณต้องการแสดงหรือนำไปยังหน้าอื่น
-                        return const homeScreenForStudent();
+              ],
+            )
+          : Column(
+              children: [
+                Expanded(
+                  flex: 5,
+                  child: QRView(
+                    key: qrKey,
+                    onQRViewCreated: onQRViewCamera,
+                  ),
+                ),
+                Expanded(
+                    child: Center(
+                  child: Column(children: [
+                    const SizedBox(height: 10), // ระยะห่างระหว่างข้อความและปุ่ม
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0), // กำหนดมุม
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (BuildContext context) {
+                              // ตรงนี้คุณสามารถกำหนดหน้าที่คุณต้องการแสดงหรือนำไปยังหน้าอื่น
+                              return const homeScreenForStudent();
+                            },
+                          ),
+                        );
                       },
+                      child: const Text('กลับไปหน้าหลัก'),
                     ),
-                  );
-                },
-                child: const Text('กลับไปหน้าหลัก'),
-              ),
-            ]),
-          ))
-        ],
-      ),
+                  ]),
+                ))
+              ],
+            ),
     );
   }
 }
