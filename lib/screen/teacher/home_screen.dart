@@ -82,7 +82,7 @@ class _homeScreenForTeacherState extends State<homeScreenForTeacher> {
                                 widthFactor: 1,
                                 child: Center(
                                   child: Text(
-                                    "รายวิชา",
+                                    "คลาสเรียน",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 18,

@@ -333,9 +333,25 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
               children: [
                 Expanded(
                   flex: 5,
-                  child: QRView(
-                    key: qrKey,
-                    onQRViewCreated: onQRViewCamera,
+                  child: Container(
+                    margin: const EdgeInsets.all(20.0), // ระยะห่างรอบตัวแสกน
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.blue, // สีเส้นขอบ
+                        width: 2.0, // ความหนาขอบ
+                      ),
+                    ),
+                    child: QRView(
+                      key: qrKey,
+                      onQRViewCreated: onQRViewCamera,
+                      overlay: QrScannerOverlayShape(
+                        borderColor: Colors.blue, // สีขอบของตัวแสกน
+                        borderRadius: 10, // รัศมีขอบของตัวแสกน
+                        borderLength: 30, // ความยาวขอบของตัวแสกน
+                        borderWidth: 10, // ความหนาขอบของตัวแสกน
+                        cutOutSize: 250, // ขนาดของหน้าแสดง QR code
+                      ),
+                    ),
                   ),
                 ),
                 Expanded(

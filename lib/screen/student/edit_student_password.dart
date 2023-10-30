@@ -34,7 +34,7 @@ class _EditStudentPasswordState extends State<EditStudentPassword> {
     user = await userController.get_Userid(id);
     setState(() {
       IdUser = id.toString();
-      isLoaded = false;
+      isLoaded = true;
     });
   }
 

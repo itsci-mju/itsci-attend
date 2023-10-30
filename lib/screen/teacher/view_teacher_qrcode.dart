@@ -71,7 +71,7 @@ class _TeacherGenerateQRState extends State<TeacherGenerateQR> {
       startTimeForQR = section?.startTime;
       formattedStartTime = startTimeForQR?.replaceAll(':', '-');
       qrData =
-          'TimeScan:${DateFormat('HH-mm-ss').format(DateTime.now()).toString()},Section:${section?.id},StartTime:$formattedStartTime';
+          'DateScan:${DateFormat('dd-MM-yyyy').format(DateTime.now()).toString()},TimeScan:${DateFormat('HH-mm-ss').format(DateTime.now()).toString()},Section:${section?.id},StartTime:$formattedStartTime';
       isLoaded = true;
     });
   }
@@ -96,35 +96,49 @@ class _TeacherGenerateQRState extends State<TeacherGenerateQR> {
 
   void onChangedDropdown(String? newValue) {
     setState(() {
-      startTimer();
-
+      // Stop the existing countdown timer if it's running
+      timecountdown?.cancel();
+      QRCode?.cancel();
       selectedDropdownValue = newValue;
       showQRCode = true;
+      // Start a new countdown timer
+      startTimer();
+      // Reset the QR code
+      Qrcodereset();
+      countdown = 30;
     });
   }
 
-  // สร้าง QR code และเปลี่ยนข้อมูลทุก 10 วินาที
+  // สร้าง QR code และเปลี่ยนข้อมูลทุก 30 วินาที
   void generateQRCode() {
     setState(() {
       qrData =
-          'TimeScan:${DateFormat('HH-mm-ss').format(DateTime.now()).toString()},Section:${section?.id},StartTime:$formattedStartTime';
+          'DateScan:${DateFormat('dd-MM-yyyy').format(DateTime.now()).toString()},TimeScan:${DateFormat('HH-mm-ss').format(DateTime.now()).toString()},Section:${section?.id},StartTime:$formattedStartTime';
     });
+  }
+
+  Timer? QRCode;
+  int? timeqrcode;
+  void Qrcodereset() {
+    if (stop == false) {
+      QRCode = Timer.periodic(const Duration(seconds: 30), (QRCode) {
+        generateQRCode();
+        Qrcodereset();
+      });
+      print('QRCODE $timeqrcode');
+    }
   }
 
   // เริ่มต้น Timer
   void startTimer() {
     if (stop == false) {
-      timer = Timer.periodic(const Duration(seconds: 10), (timer) {
-        generateQRCode();
-      });
-
       timecountdown =
           Timer.periodic(const Duration(seconds: 1), (timecountdown) {
         setState(() {
           if (countdown > 1) {
             countdown--;
           } else {
-            countdown = 10; // รีเซ็ตนับถอยหลังเป็น 10 วินาทีอีกครั้ง
+            countdown = 30;
           }
         });
       });
@@ -137,6 +151,9 @@ class _TeacherGenerateQRState extends State<TeacherGenerateQR> {
 
     fetchData(widget.sectionId);
     selectedDropdownValue = dropdownItems[0];
+    setState(() {
+      timeqrcode = countdown;
+    });
   }
 
   @override

@@ -244,13 +244,15 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
           const SizedBox(
             height: 5,
           ),
+          /*Text("ชื่อรายวิชา: ${subjectName ?? ""}",
+              style: CustomTextStyle.TextGeneral),
+          const SizedBox(
+            height: 5,
+          ),*/
           Text("ประเภท: ${type ?? ""}", style: CustomTextStyle.TextGeneral),
           const SizedBox(
             height: 5,
           ),
-          Text(
-              "วันที่เข้าเรียน : ${DateFormat('dd-MM-yyyy').format(DateTime.parse(checkInTime!).toLocal())}",
-              style: CustomTextStyle.TextGeneral)
         ],
       );
     } else {

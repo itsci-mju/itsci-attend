@@ -96,8 +96,8 @@ class _DrawerTeacherWidgetState extends State<DrawerTeacherWidget> {
                 color: Colors.white,
               ),
               minLeadingWidth: 10,
-              title:
-                  const Text('รายวิชา', style: TextStyle(color: Colors.white)),
+              title: const Text('คลาสเรียน',
+                  style: TextStyle(color: Colors.white)),
               onTap: () {
                 Navigator.of(context).pushReplacement(
                     MaterialPageRoute(builder: (BuildContext context) {
@@ -113,7 +113,7 @@ class _DrawerTeacherWidgetState extends State<DrawerTeacherWidget> {
               ),
               minLeadingWidth: 10,
               title: const Text(
-                'แก้ไขข้อมูลส่วนตัว',
+                'โปรไฟล์',
                 style: TextStyle(color: Colors.white),
               ),
               onTap: () {

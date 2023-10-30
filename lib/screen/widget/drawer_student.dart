@@ -113,7 +113,7 @@ class _DrawerStudentWidgettState extends State<DrawerStudentWidget> {
                 color: Colors.white,
               ),
               minLeadingWidth: 10,
-              title: const Text('การเข้าเรียน',
+              title: const Text('คลาสเรียน',
                   style: TextStyle(color: Colors.white)),
               onTap: () {
                 Navigator.of(context).pushReplacement(
@@ -130,7 +130,7 @@ class _DrawerStudentWidgettState extends State<DrawerStudentWidget> {
               ),
               minLeadingWidth: 10,
               title: const Text(
-                'แก้ไขข้อมูลส่วนตัว',
+                'โปรไฟล์',
                 style: TextStyle(color: Colors.white),
               ),
               onTap: () {
