@@ -41,7 +41,7 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
   String? checkInTime;
   String? status;
   bool qrExpire = true;
-
+  Registration? reg;
   var DateNowCheck;
   String? startTime;
   String? checkInTimeForCal;
@@ -55,7 +55,6 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? username = prefs.getString('username');
     //String? username = "MJU6304106304";
-
     //print(username);
     if (username != null) {
       User? user = await userController.get_UserByUsername(username);
@@ -159,13 +158,13 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
     if (dateGenQR == checkInDate && timeResult <= int.parse(timeLimit)) {
       qrExpire = false;
     }
-    print("TestDateGenQR ${dateGenQR}");
+    /*print("TestDateGenQR ${dateGenQR}");
     print("TestcheckInDate ${checkInDate}");
     print("TestTimeLimit ${int.parse(timeLimit)}");
     print("TestCheckTimeMinInt ${checkTimeSecondsInt}");
     print("TestTimeGenQRMinInt ${timeGenQRSecondsInt}");
     print("TestResult ${timeResult}");
-    //print("TestStatus ${status}");
+    print("TestStatus ${status}");*/
   }
 
   void onQRViewCamera(QRViewController controller) {
@@ -176,13 +175,7 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
         scannedData =
             result != null ? result!.code : null; // ดึงข้อมูลจาก result
       });
-      //print("ลำดับ 4 ${scannedData} ${regId}");
       splitData(scanData.code.toString());
-      //หาค่า Id ของ registration
-      Registration? reg = await registrationController
-          .get_RegistrationIdBySectionIdandIdUser(sectionId!, IdUser!);
-      regId = reg!.id.toString();
-      //print("ลำดับ 3 ${regId}");
       if (scannedData != null && regId != null) {
         if (qrExpire == false) {
           qrExpire = true;
@@ -194,6 +187,9 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
       } else {
         showScanUserNotInSectionDialog(context);
       }
+      reg = await registrationController.get_RegistrationIdBySectionIdandIdUser(
+          sectionId!, IdUser!);
+      regId = reg!.id.toString();
     });
   }
 
@@ -271,7 +267,7 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
         return AlertDialog(
           title: const Text('แจ้งเตือน!'),
           //content: Text('ค่าที่ได้: $scannedData'),
-          content: const Text('QR Code หมดอายุแล้ว!!'),
+          content: const Text('QR Code หมดอายุแล้ว!'),
           actions: [
             TextButton(
               onPressed: () async {

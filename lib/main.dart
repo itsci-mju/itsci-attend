@@ -8,6 +8,7 @@ import 'package:flutter_application_mobiletest2/screen/student/detail_student_pr
 import 'package:flutter_application_mobiletest2/screen/student/home_screen.dart';
 import 'package:flutter_application_mobiletest2/screen/student/list_subject.dart';
 import 'package:flutter_application_mobiletest2/screen/student/scan_screen.dart';
+import 'package:flutter_application_mobiletest2/screen/teacher/list_class.dart';
 
 void main() => runApp(const MyApp());
 
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: maincolor,
       ),
-      //home: const DetailStudentProfile(),
+      //home: const ListClassTeacherScreen(),
       home: const LoginScreen(),
     );
   }

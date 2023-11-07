@@ -146,7 +146,7 @@ class _DetailTeacherProfileState extends State<DetailTeacherProfile> {
                             height: 5,
                           ),
                           Text(
-                            "วัน เดือน ปี ที่เกิด : ${DateFormat('dd/MM/yyyy').format(selecteData)}",
+                            "วัน เดือน ปีเกิด : ${DateFormat('dd/MM/yyyy').format(selecteData)}",
                             style: const TextStyle(fontSize: 15),
                           ),
                           const SizedBox(

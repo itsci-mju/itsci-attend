@@ -97,8 +97,8 @@ class _DrawerStudentWidgettState extends State<DrawerStudentWidget> {
                 color: Colors.white,
               ),
               minLeadingWidth: 10,
-              title:
-                  const Text('แสกน QR', style: TextStyle(color: Colors.white)),
+              title: const Text('สแกนคิวอาร์โค้ด',
+                  style: TextStyle(color: Colors.white)),
               onTap: () {
                 Navigator.of(context).pushReplacement(
                     MaterialPageRoute(builder: (BuildContext context) {

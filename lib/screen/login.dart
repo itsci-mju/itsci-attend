@@ -6,7 +6,7 @@ import 'package:flutter_application_mobiletest2/controller/login_controller.dart
 import 'package:flutter_application_mobiletest2/controller/user_controller.dart';
 import 'package:flutter_application_mobiletest2/model/login.dart';
 import 'package:flutter_application_mobiletest2/screen/student/home_screen.dart';
-import 'package:flutter_application_mobiletest2/screen/teacher/home_screen.dart';
+import 'package:flutter_application_mobiletest2/screen/teacher/list_class.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:quickalert/quickalert.dart';
@@ -127,7 +127,7 @@ class _loginScreenState extends State<LoginScreen> {
                           keyboardType: TextInputType.text,
                           controller: usernameController,
                           decoration: const InputDecoration(
-                            labelText: "Username",
+                            labelText: "ชื่อผู้ใช้",
                             border: OutlineInputBorder(),
                             prefixIcon: Icon(Icons.person),
                           ),
@@ -154,7 +154,7 @@ class _loginScreenState extends State<LoginScreen> {
                           controller: passworldController,
                           obscureText: passToggle,
                           decoration: InputDecoration(
-                              labelText: "Password",
+                              labelText: "รหัสผ่าน",
                               border: const OutlineInputBorder(),
                               prefixIcon: const Icon(Icons.lock),
                               suffixIcon: InkWell(
@@ -220,7 +220,7 @@ class _loginScreenState extends State<LoginScreen> {
                                   Navigator.of(context).pushReplacement(
                                       MaterialPageRoute(
                                           builder: (BuildContext context) {
-                                    return const homeScreenForTeacher();
+                                    return const ListClassTeacherScreen();
                                   }));
                                 }
                               } else if (response.statusCode == 409) {
@@ -240,7 +240,7 @@ class _loginScreenState extends State<LoginScreen> {
                                 borderRadius: BorderRadius.circular(5),
                               ),
                               child: const Center(
-                                child: Text("Log In",
+                                child: Text("เข้าสู่ระบบ",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 20,

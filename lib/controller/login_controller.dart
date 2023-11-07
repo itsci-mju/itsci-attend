@@ -17,6 +17,18 @@ class LoginController {
     return response;
   }
 
+  Future change_Password(String username, String password) async {
+    Map data = {"username": username, "password": password};
+
+    var jsonData = json.encode(data);
+    var url = Uri.parse(baseURL + "/login/change_password");
+
+    http.Response response =
+        await http.post(url, headers: headers, body: jsonData);
+
+    return response;
+  }
+
   Future get_ListLogin() async {
     var url = Uri.parse(baseURL + '/login/list');
 

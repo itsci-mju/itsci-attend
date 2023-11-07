@@ -11,7 +11,7 @@ var kMyAppBar = AppBar(
     height: imageHeight,
   ),
   toolbarHeight: appBarHeight,
-  iconTheme: IconThemeData(color: maincolor),
-  backgroundColor: Color.fromARGB(255, 255, 255, 255),
+  iconTheme: const IconThemeData(color: maincolor),
+  backgroundColor: const Color.fromARGB(255, 255, 255, 255),
   elevation: 10,
 );

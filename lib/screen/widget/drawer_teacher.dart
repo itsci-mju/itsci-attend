@@ -6,7 +6,6 @@ import 'package:flutter_application_mobiletest2/controller/user_controller.dart'
 import 'package:flutter_application_mobiletest2/model/user.dart';
 import 'package:flutter_application_mobiletest2/screen/login.dart';
 import 'package:flutter_application_mobiletest2/screen/teacher/detail_teacher_profile.dart';
-import 'package:flutter_application_mobiletest2/screen/teacher/home_screen.dart';
 import 'package:flutter_application_mobiletest2/screen/teacher/list_class.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -72,22 +71,6 @@ class _DrawerTeacherWidgetState extends State<DrawerTeacherWidget> {
                   ),
                 ],
               ),
-            ),
-            ListTile(
-              leading: const Icon(
-                Icons.home,
-                size: 30,
-                color: Colors.white,
-              ),
-              minLeadingWidth: 10,
-              title:
-                  const Text('หน้าหลัก', style: TextStyle(color: Colors.white)),
-              onTap: () {
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (BuildContext context) {
-                  return const homeScreenForTeacher();
-                }));
-              },
             ),
             ListTile(
               leading: const Icon(

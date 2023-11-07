@@ -27,9 +27,15 @@ class _ListSubjectStudentScreenState extends State<ListSubjectStudentScreen> {
       RegistrationController();
   final UserController userController = UserController();
   List<Map<String, dynamic>> data = [];
+  List<Map<String, dynamic>> filterSemesterData = [];
+  List<Map<String, dynamic>> filterTermData = [];
   bool? isLoaded = false;
   List<Registration>? registration;
   String? IdUser;
+  String? selectedSemester;
+  List<String> semesters = ['ทั้งหมด'];
+  String? selectedTerm;
+  List<String> terms = ['ทั้งหมด', '1', '2'];
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -41,9 +47,9 @@ class _ListSubjectStudentScreenState extends State<ListSubjectStudentScreen> {
     //print(username);
     if (username != null) {
       User? user = await userController.get_UserByUsername(username);
+      IdUser = user?.id.toString();
       //print(user?.id);
       if (user != null) {
-        IdUser = user.id.toString();
         //print(IdUser);
         List<Registration> reg =
             await registrationController.get_ViewSubject(user.id.toString());
@@ -60,12 +66,36 @@ class _ListSubjectStudentScreenState extends State<ListSubjectStudentScreen> {
                     'group': reg.section?.sectionNumber,
                     'startTime': reg.section?.startTime,
                     'duration': reg.section?.duration,
+                    'semester': reg.section?.course?.semester,
+                    'term': reg.section?.course?.term,
                   })
               .toList();
           isLoaded = true;
+          // เพิ่มค่า semester ลงใน semesters
+          data.forEach((row) {
+            String? semester = row['semester'].toString();
+            if (semester != null && !semesters.contains(semester)) {
+              semesters.add(semester);
+            }
+          });
+          filterSemesterData = data
+              .where((row) =>
+                  selectedSemester == 'ทั้งหมด' ||
+                  selectedSemester == null ||
+                  row['semester'].toString() == selectedSemester)
+              .toList();
+          filterData();
         });
       }
     }
+  }
+
+  void filterData() {
+    filterTermData = filterSemesterData.where((row) {
+      return (selectedTerm == 'ทั้งหมด' ||
+          selectedTerm == null ||
+          row['term'].toString() == selectedTerm);
+    }).toList();
   }
 
   String addTime(String timeString, int hoursToAdd) {
@@ -105,13 +135,20 @@ class _ListSubjectStudentScreenState extends State<ListSubjectStudentScreen> {
                 ),
               ],
             )
-          : ListView(
-              children: <Widget>[
-                Column(
-                  children: [
+          : Column(
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                      border: Border(
+                    bottom: BorderSide(
+                      color: Color.fromARGB(255, 0, 0, 0),
+                      width: 2.0,
+                    ),
+                  )),
+                  child: Column(children: [
                     const Padding(
                       padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     ),
                     const Text(
                       "เลือกรายวิชาที่ต้องการดูการเข้าเรียน",
@@ -119,100 +156,224 @@ class _ListSubjectStudentScreenState extends State<ListSubjectStudentScreen> {
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
                     const SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
-                    for (var item in data)
-                      Container(
-                        width: 330,
-                        //height: 100,
-                        child: Card(
-                          elevation: 10,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(35),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 160,
+                          height: 50,
+                          alignment: AlignmentDirectional.centerStart,
+                          padding: const EdgeInsets.only(
+                              left: 15.0, top: 0.0, right: 10.0, bottom: 0.0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: const Color.fromARGB(
+                                  255, 0, 0, 0), // กำหนดสีขอบของ Container
+                              width: 1.0, // กำหนดความกว้างขอบของ Container
+                            ),
                           ),
-                          color: maincolor,
-                          child: InkWell(
-                            onTap: () async {
-                              //print(item['id'].toString());
-                              await Future.delayed(Duration
-                                  .zero); // รอเวลาเล็กน้อยก่อนไปหน้า DetailRoomScreen
-                              Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                      builder: (BuildContext context) {
-                                return AttendanceStudentScreen(
-                                  regId: item['id'].toString(),
-                                );
-                              }));
+                          child: DropdownButtonFormField<String>(
+                            isExpanded: true,
+                            value: selectedSemester,
+                            hint: const Text(
+                              'ปีการศึกษา',
+                              style: TextStyle(
+                                fontSize: 15,
+                              ),
+                            ),
+                            items: semesters.map((semester) {
+                              return DropdownMenuItem(
+                                value: semester,
+                                child: Text(
+                                  semester,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedSemester = newValue;
+                                filterSemesterData = data
+                                    .where((row) =>
+                                        selectedSemester == 'ทั้งหมด' ||
+                                        selectedSemester == null ||
+                                        row['semester'].toString() ==
+                                            selectedSemester)
+                                    .toList();
+                                selectedTerm = null;
+                                filterData();
+                              });
                             },
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  ListTile(
-                                    title: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: <Widget>[
-                                        Column(
-                                          children: [
-                                            Text("${item['subjectid']} ",
-                                                style: CustomTextStyle
-                                                    .TextGeneral),
-                                            Text(
-                                              " ${item['subjectname']}",
-                                              style:
-                                                  CustomTextStyle.TextGeneral,
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines:
-                                                  2, // กำหนดจำนวนบรรทัดสูงสุดที่แสดง
-                                              textAlign: TextAlign
-                                                  .center, // จัดให้อยู่ตรงกลาง,
-                                            )
-                                          ],
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text("กลุ่ม: ${item['group']} ",
-                                                style: CustomTextStyle
-                                                    .TextGeneral),
-                                            Text(" ประเภท: ${item['type']}",
-                                                style: CustomTextStyle
-                                                    .TextGeneral),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 5),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                                "${item['startTime'] != null ? item['startTime'].substring(0, 5) : 'N/A'}",
-                                                style: CustomTextStyle
-                                                    .TextGeneral),
-                                            const Text(" - ",
-                                                style: CustomTextStyle
-                                                    .TextGeneral),
-                                            Text(
-                                              "${addTime(item['startTime'].substring(0, 5), item['duration'])}",
-                                              style:
-                                                  CustomTextStyle.TextGeneral,
-                                            ),
-                                          ],
+                            decoration: const InputDecoration.collapsed(
+                              border: InputBorder.none,
+                              hintText:
+                                  '', // กำหนด border เป็น InputBorder.none เพื่อลบ underline
+                            ),
+                            icon: const Icon(Icons.keyboard_arrow_down),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Container(
+                          width: 130,
+                          height: 50,
+                          alignment: AlignmentDirectional.centerStart,
+                          padding: const EdgeInsets.only(
+                              left: 15.0, top: 0.0, right: 10.0, bottom: 0.0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: const Color.fromARGB(
+                                  255, 0, 0, 0), // กำหนดสีขอบของ Container
+                              width: 1.0, // กำหนดความกว้างขอบของ Container
+                            ),
+                          ),
+                          child: DropdownButtonFormField<String>(
+                            decoration: const InputDecoration.collapsed(
+                              border: InputBorder.none,
+                              hintText:
+                                  '', // กำหนด border เป็น InputBorder.none เพื่อลบ underline
+                            ),
+                            isExpanded: true,
+                            hint: const Text(
+                              'เทอม',
+                              style: TextStyle(
+                                fontSize: 15,
+                              ),
+                            ),
+                            value: selectedTerm,
+                            items: terms.map((term) {
+                              return DropdownMenuItem(
+                                value: term,
+                                child: Text(term),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedTerm = newValue;
+                                filterData();
+                              });
+                            },
+                            icon: const Icon(Icons.keyboard_arrow_down),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                  ]),
+                ),
+                Expanded(
+                  child: ListView(
+                    children: <Widget>[
+                      Column(
+                        children: [
+                          for (var item in filterTermData)
+                            Container(
+                              width: 330,
+                              //height: 100,
+                              child: Card(
+                                elevation: 10,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(35),
+                                ),
+                                color: maincolor,
+                                child: InkWell(
+                                  onTap: () async {
+                                    //print(item['id'].toString());
+                                    await Future.delayed(Duration
+                                        .zero); // รอเวลาเล็กน้อยก่อนไปหน้า DetailRoomScreen
+                                    Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(
+                                            builder: (BuildContext context) {
+                                      return AttendanceStudentScreen(
+                                        regId: item['id'].toString(),
+                                      );
+                                    }));
+                                  },
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        ListTile(
+                                          title: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Column(
+                                                children: [
+                                                  Text("${item['subjectid']} ",
+                                                      style: CustomTextStyle
+                                                          .TextGeneral),
+                                                  Text(
+                                                    " ${item['subjectname']}",
+                                                    style: CustomTextStyle
+                                                        .TextGeneral,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines:
+                                                        2, // กำหนดจำนวนบรรทัดสูงสุดที่แสดง
+                                                    textAlign: TextAlign
+                                                        .center, // จัดให้อยู่ตรงกลาง,
+                                                  )
+                                                ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                      "กลุ่ม: ${item['group']} ",
+                                                      style: CustomTextStyle
+                                                          .TextGeneral),
+                                                  Text(
+                                                      " ประเภท: ${item['type']}",
+                                                      style: CustomTextStyle
+                                                          .TextGeneral),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 5),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                      "${item['startTime'] != null ? item['startTime'].substring(0, 5) : 'N/A'}",
+                                                      style: CustomTextStyle
+                                                          .TextGeneral),
+                                                  const Text(" - ",
+                                                      style: CustomTextStyle
+                                                          .TextGeneral),
+                                                  Text(
+                                                    "${addTime(item['startTime'].substring(0, 5), item['duration'])}",
+                                                    style: CustomTextStyle
+                                                        .TextGeneral,
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                ],
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                      ),
-                  ],
-                )
+                        ],
+                      )
+                    ],
+                  ),
+                ),
               ],
             ),
     );

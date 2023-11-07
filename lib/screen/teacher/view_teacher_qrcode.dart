@@ -105,7 +105,7 @@ class _TeacherGenerateQRState extends State<TeacherGenerateQR> {
       startTimer();
       // Reset the QR code
       Qrcodereset();
-      countdown = 30;
+      countdown = 300;
     });
   }
 
@@ -121,7 +121,7 @@ class _TeacherGenerateQRState extends State<TeacherGenerateQR> {
   int? timeqrcode;
   void Qrcodereset() {
     if (stop == false) {
-      QRCode = Timer.periodic(const Duration(seconds: 30), (QRCode) {
+      QRCode = Timer.periodic(const Duration(seconds: 300), (QRCode) {
         generateQRCode();
         Qrcodereset();
       });
@@ -138,7 +138,7 @@ class _TeacherGenerateQRState extends State<TeacherGenerateQR> {
           if (countdown > 1) {
             countdown--;
           } else {
-            countdown = 30;
+            countdown = 300;
           }
         });
       });
@@ -165,9 +165,6 @@ class _TeacherGenerateQRState extends State<TeacherGenerateQR> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      /*appBar: kMyAppBar,
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-      endDrawer: const DrawerTeacherWidget(),*/
       body: isLoaded == false
           ? Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -186,11 +183,19 @@ class _TeacherGenerateQRState extends State<TeacherGenerateQR> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
                   child: Column(children: [
-                    const Text("เลือกสัปดาห์เพื่อสร้าง QR Code",
+                    const Text("สร้างคิวอาร์โค้ด",
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20)),
+                            fontWeight: FontWeight.bold, fontSize: 35)),
                     const SizedBox(
                       height: 10,
+                    ),
+                    const Text("เลือกสัปดาห์เพื่อสร้างคิวอาร์โค้ด*",
+                        style: TextStyle(
+                            color: maincolor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20)),
+                    const SizedBox(
+                      height: 15,
                     ),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -295,9 +300,12 @@ class _TeacherGenerateQRState extends State<TeacherGenerateQR> {
               size: 200.0,
             ),
           ),
+          const SizedBox(
+            height: 20,
+          ),
           Center(
             child: Text(
-              'Countdown: ${countdown} seconds',
+              'คิวอาร์โค้ดจะหมดอายุใน: ${countdown} วินาที',
               style: const TextStyle(fontSize: 24),
             ),
           ),

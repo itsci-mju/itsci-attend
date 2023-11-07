@@ -52,6 +52,7 @@ class RegistrationController {
     var jsonResponse = json.decode(utf8Body);
     Registration registration =
         Registration.formJsonToRegistration(jsonResponse);
+    print("ลำดับ 2.6 -  ${response}");
     return registration;
   }
 

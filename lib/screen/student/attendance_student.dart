@@ -32,10 +32,11 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
   String? subjectName;
   String? statusCheck;
   String? formattedTime;
-  bool checkInTimeandType = false;
+  bool checkData = false;
   bool? isLoaded = false;
 
   void showAtten(String regId) async {
+    print(regId);
     List<AttendanceSchedule> atten = await attendanceScheduleController
         .listAttendanceScheduleByRegistrationId(regId);
     setState(() {
@@ -62,11 +63,7 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
       type = data.isNotEmpty ? data[0]['type'] : null;
       checkInTime = data.isNotEmpty ? data[0]['checkInTime'] : null;
 
-      if (checkInTime != null && type != null) {
-        checkInTimeandType = true;
-      } else {
-        checkInTimeandType = false;
-      }
+      checkData = true;
       isLoaded = true;
     });
   }
@@ -227,7 +224,7 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
 
   // ignore: non_constant_identifier_names
   Widget AttenHeader() {
-    if (checkInTimeandType) {
+    if (checkData) {
       return Column(
         children: [
           const Text("การเข้าเรียน", style: CustomTextStyle.TextGeneral),
@@ -244,11 +241,6 @@ class _AttendanceStudentScreenState extends State<AttendanceStudentScreen> {
           const SizedBox(
             height: 5,
           ),
-          /*Text("ชื่อรายวิชา: ${subjectName ?? ""}",
-              style: CustomTextStyle.TextGeneral),
-          const SizedBox(
-            height: 5,
-          ),*/
           Text("ประเภท: ${type ?? ""}", style: CustomTextStyle.TextGeneral),
           const SizedBox(
             height: 5,

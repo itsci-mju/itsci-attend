@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_application_mobiletest2/color.dart';
+import 'package:flutter_application_mobiletest2/controller/login_controller.dart';
 import 'package:flutter_application_mobiletest2/controller/student_controller.dart';
 import 'package:flutter_application_mobiletest2/controller/user_controller.dart';
 import 'package:flutter_application_mobiletest2/model/user.dart';
@@ -21,19 +22,25 @@ class EditStudentPassword extends StatefulWidget {
 }
 
 class _EditStudentPasswordState extends State<EditStudentPassword> {
-  TextEditingController passwordController = TextEditingController();
+  TextEditingController oldPasswordController = TextEditingController();
+  TextEditingController newPasswordController = TextEditingController();
+  final LoginController loginController = LoginController();
   final UserController userController = UserController();
   final StudentController studentController = StudentController();
   final GlobalKey<FormState> _formfield = GlobalKey<FormState>();
   bool? isLoaded = false;
-  bool passToggle = true;
+  bool passToggle1 = true;
+  bool passToggle2 = true;
+  bool passToggle3 = true;
   User? user;
-  String? IdUser;
+  String? username;
+  String? password;
+  String? originalPassword;
 
   void userData(String id) async {
     user = await userController.get_Userid(id);
+    username = user?.login?.username.toString();
     setState(() {
-      IdUser = id.toString();
       isLoaded = true;
     });
   }
@@ -48,9 +55,10 @@ class _EditStudentPasswordState extends State<EditStudentPassword> {
     QuickAlert.show(
       context: context,
       title: "การแก้ไขรหัสผ่านสำเร็จ",
-      text: "ข้อมูลรหัสผ่านถูกแก้ไขเรียบร้อยแล้ว",
+      text: "รหัสผ่านถูกแก้ไขเรียบร้อยแล้ว",
       type: QuickAlertType.success,
       confirmBtnText: "ตกลง",
+      barrierDismissible: false,
       onConfirmBtnTap: () {
         // ทำการนำทางไปยังหน้าใหม่ที่คุณต้องการ
         Navigator.of(context).pushReplacement(
@@ -83,117 +91,143 @@ class _EditStudentPasswordState extends State<EditStudentPassword> {
           : Form(
               key: _formfield,
               child: Column(children: [
-                Center(
-                  child: Column(children: const [
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    ),
-                    Icon(
-                      Icons.person,
-                      size: 100,
-                      color: maincolor,
-                    ),
-                  ]),
-                ),
                 Column(
                   children: [
                     Container(
                       margin: const EdgeInsets.symmetric(
-                          vertical: 5, horizontal: 40),
+                          vertical: 0, horizontal: 10),
                       padding: const EdgeInsets.only(
-                          left: 40, right: 40, top: 20, bottom: 20),
+                          left: 30, right: 30, top: 40, bottom: 20),
                       decoration: BoxDecoration(
                         //color: maincolor,
-                        color: Colors.grey[300],
+                        color: const Color.fromARGB(255, 255, 255, 255),
                         borderRadius: BorderRadius.circular(50),
                       ),
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            const Text(
-                              "รหัสผ่าน : ",
-                              style: CustomTextStyle.createFontStyle,
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Container(
-                              width: 200,
-                              child: Expanded(
-                                child: TextFormField(
-                                  keyboardType: TextInputType.text,
-                                  controller: passwordController,
-                                  obscureText: passToggle,
-                                  decoration: InputDecoration(
-                                      errorStyle: const TextStyle(),
-                                      filled:
-                                          true, // เปิดการใช้งานการเติมพื้นหลัง
-                                      fillColor: Colors.white,
-                                      border: InputBorder
-                                          .none, // กำหนดให้ไม่มีเส้นขอบ
-                                      suffixIcon: InkWell(
-                                        onTap: () {
-                                          setState(() {
-                                            passToggle = !passToggle;
-                                          });
-                                        },
-                                        child: Icon(passToggle
-                                            ? Icons.visibility
-                                            : Icons.visibility_off),
-                                      )),
-                                  validator: (value) {
-                                    bool subjectNameValid = RegExp(
-                                            r'^(?=.*[A-Za-z])(?=.*[!@#\$%^&*])[A-Za-z0-9!@#\$%^&*]{8,16}$')
-                                        .hasMatch(value!);
-                                    if (value.isEmpty) {
-                                      return "กรุณากรอกรหัสผ่าน*";
-                                    } else if (!subjectNameValid) {
-                                      return "กรุณากรอกรหัสผ่าน\nเป็นภาษาอังกฤษ\nอักษรพิเศษและตัวเลข\nความยาว 8-16 ตัว";
-                                    }
-                                  },
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "เปลี่ยนรหัสผ่าน",
+                                style: TextStyle(
+                                  color: maincolor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 30.0,
                                 ),
                               ),
                             ),
                             const SizedBox(
-                              height: 10,
+                              height: 20,
                             ),
-                            const Text(
-                              "ยืนยันรหัสผ่าน : ",
-                              style: CustomTextStyle.createFontStyle,
+                            TextFormField(
+                              keyboardType: TextInputType.text,
+                              controller: oldPasswordController,
+                              obscureText: passToggle1,
+                              decoration: InputDecoration(
+                                  labelText: 'รหัสผ่านเดิม :',
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.always,
+                                  labelStyle: const TextStyle(
+                                      color:
+                                          Colors.black, // กำหนดสีของ labelText
+                                      fontSize:
+                                          20.0, // กำหนดขนาดตัวอักษรของ labelText
+                                      fontWeight: FontWeight.bold),
+                                  errorStyle: const TextStyle(),
+                                  suffixIcon: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        passToggle1 = !passToggle1;
+                                      });
+                                    },
+                                    child: Icon(passToggle1
+                                        ? Icons.visibility
+                                        : Icons.visibility_off),
+                                  )),
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return "กรุณากรอกรหัสผ่านเดิม*";
+                                } else if (value != password) {
+                                  return "รหัสผ่านเดิมไม่ถูกต้อง";
+                                }
+                              },
                             ),
                             const SizedBox(
                               height: 10,
                             ),
-                            Container(
-                              width: 500,
-                              child: TextFormField(
-                                keyboardType: TextInputType.text,
-                                obscureText: passToggle,
-                                decoration: InputDecoration(
-                                    errorStyle: const TextStyle(),
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    border: InputBorder.none,
-                                    suffixIcon: InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          passToggle = !passToggle;
-                                        });
-                                      },
-                                      child: Icon(passToggle
-                                          ? Icons.visibility
-                                          : Icons.visibility_off),
-                                    )),
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return "กรุณายืนยันรหัสผ่าน*";
-                                  } else if (value != passwordController.text) {
-                                    return "รหัสผ่านไม่ตรงกัน";
-                                  }
-                                },
-                              ),
+                            TextFormField(
+                              keyboardType: TextInputType.text,
+                              controller: newPasswordController,
+                              obscureText: passToggle2,
+                              decoration: InputDecoration(
+                                  labelText: 'รหัสผ่านใหม่ :',
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.always,
+                                  labelStyle: const TextStyle(
+                                      color:
+                                          Colors.black, // กำหนดสีของ labelText
+                                      fontSize:
+                                          20.0, // กำหนดขนาดตัวอักษรของ labelText
+                                      fontWeight: FontWeight.bold),
+                                  errorStyle: const TextStyle(),
+                                  suffixIcon: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        passToggle2 = !passToggle2;
+                                      });
+                                    },
+                                    child: Icon(passToggle2
+                                        ? Icons.visibility
+                                        : Icons.visibility_off),
+                                  )),
+                              validator: (value) {
+                                bool subjectNameValid = RegExp(
+                                        r'^(?=.*[A-Za-z])(?=.*[!@#\$%^&*])[A-Za-z0-9!@#\$%^&*]{8,16}$')
+                                    .hasMatch(value!);
+                                if (value.isEmpty) {
+                                  return "กรุณากรอกรหัสผ่านใหม่*";
+                                } else if (!subjectNameValid) {
+                                  return "กรุณากรอกรหัสผ่านเป็นภาษาอังกฤษอักษรพิเศษ\nและตัวเลขความยาว 8-16 ตัว";
+                                }
+                              },
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            TextFormField(
+                              keyboardType: TextInputType.text,
+                              obscureText: passToggle3,
+                              decoration: InputDecoration(
+                                  labelText: 'ยืนยันรหัสผ่านใหม่ :',
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.always,
+                                  labelStyle: const TextStyle(
+                                      color:
+                                          Colors.black, // กำหนดสีของ labelText
+                                      fontSize:
+                                          20.0, // กำหนดขนาดตัวอักษรของ labelText
+                                      fontWeight: FontWeight.bold),
+                                  errorStyle: const TextStyle(),
+                                  suffixIcon: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        passToggle3 = !passToggle3;
+                                      });
+                                    },
+                                    child: Icon(passToggle3
+                                        ? Icons.visibility
+                                        : Icons.visibility_off),
+                                  )),
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return "กรุณากรอกยืนยันรหัสผ่าน*";
+                                } else if (value !=
+                                    newPasswordController.text) {
+                                  return "ยืนยันรหัสผ่านไม่ตรงกัน";
+                                }
+                              },
                             ),
                             const SizedBox(
                               height: 20,
@@ -202,7 +236,8 @@ class _EditStudentPasswordState extends State<EditStudentPassword> {
                               child: Column(
                                 children: [
                                   Container(
-                                    width: 200, // กำหนดความกว้างของปุ่ม
+                                    width: double
+                                        .infinity, // กำหนดความกว้างของปุ่ม
                                     child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         shape: RoundedRectangleBorder(
@@ -211,13 +246,27 @@ class _EditStudentPasswordState extends State<EditStudentPassword> {
                                         ),
                                       ),
                                       onPressed: () async {
+                                        print("Check Password ${password}");
+                                        print("Check user ${username}");
+                                        print(
+                                            "Check Password ${oldPasswordController.text}");
+                                        http.Response response =
+                                            await loginController
+                                                .change_Password(username!,
+                                                    oldPasswordController.text);
+                                        if (response.statusCode == 200) {
+                                          password = oldPasswordController.text;
+                                        } else {
+                                          password = "";
+                                        }
                                         if (_formfield.currentState!
                                             .validate()) {
                                           http.Response response =
                                               await studentController
                                                   .updatePasswordStudent(
                                                       '${user?.login?.id.toString()}',
-                                                      passwordController.text);
+                                                      newPasswordController
+                                                          .text);
 
                                           if (response.statusCode == 200) {
                                             showSuccessToChangeUserAlert();
@@ -226,30 +275,6 @@ class _EditStudentPasswordState extends State<EditStudentPassword> {
                                         }
                                       },
                                       child: const Text("ยืนยัน",
-                                          style: CustomTextStyle.TextGeneral),
-                                    ),
-                                  ),
-                                  Container(
-                                    width: 200, // กำหนดความกว้างของปุ่ม
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        primary: Colors
-                                            .red, // กำหนดสีพื้นหลังของปุ่ม
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                              20.0), // กำหนดมุม
-                                        ),
-                                      ),
-                                      onPressed: () async {
-                                        await Future.delayed(Duration
-                                            .zero); // รอเวลาเล็กน้อยก่อนไปหน้า DetailRoomScreen
-                                        Navigator.of(context).pushReplacement(
-                                            MaterialPageRoute(builder:
-                                                (BuildContext context) {
-                                          return const DetailStudentProfile();
-                                        }));
-                                      },
-                                      child: const Text("ยกเลิก",
                                           style: CustomTextStyle.TextGeneral),
                                     ),
                                   ),
