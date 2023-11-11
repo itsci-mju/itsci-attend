@@ -290,6 +290,7 @@ class _TeacherGenerateQRState extends State<TeacherGenerateQR> {
   Widget buildQRCodeWidget() {
     if (showQRCode) {
       return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Center(
             child: QrImage(
@@ -305,8 +306,9 @@ class _TeacherGenerateQRState extends State<TeacherGenerateQR> {
           ),
           Center(
             child: Text(
-              'คิวอาร์โค้ดจะหมดอายุใน: ${countdown} วินาที',
+              'คิวอาร์โค้ดจะหมดอายุ\nใน: ${countdown} วินาที',
               style: const TextStyle(fontSize: 24),
+              textAlign: TextAlign.center,
             ),
           ),
         ],

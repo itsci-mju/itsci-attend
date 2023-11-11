@@ -16,6 +16,8 @@ import 'package:quiver/testing/src/time/time.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import '../../model/attendanceSchedule.dart';
+
 class scanScreenForStudent extends StatefulWidget {
   const scanScreenForStudent({super.key});
 
@@ -141,6 +143,15 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
     print("TestStatus ${status}");*/
   }
 
+  Future<bool> isUserAlreadyScanned(String regId, String weekNo) async {
+    // สอบถามรายการเช็คชื่อเพื่อตรวจสอบว่าผู้ใช้ได้ถูกสแกนไปแล้วสำหรับ regId และ weekNo ที่ระบุ
+    // คุณสามารถใช้ attendanceScheduleController เพื่อสอบถามรายการ
+    // หากมีรายการอยู่ ให้ส่งค่าเป็น true; มิฉะนั้นส่งค่าเป็น false
+    AttendanceSchedule? existingRecord =
+        await attendanceScheduleController.getAttendanceRecord(regId, weekNo);
+    return existingRecord != null;
+  }
+
   void qrCheckExpire(String dateGenQR, String checkInDate, String timeGenQR,
       String checkInTime, String timeLimit) {
     List<String> timeGenQRTrim = timeGenQR.split('-');
@@ -177,7 +188,10 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
       });
       splitData(scanData.code.toString());
       if (scannedData != null && regId != null) {
-        if (qrExpire == false) {
+        if (await isUserAlreadyScanned(regId!, weekNo!)) {
+          showUserAleadyScannedDialog(
+              context); // ผู้ใช้ถูกสแกนไปแล้ว แสดงไดอะล็อก
+        } else if (qrExpire == false) {
           qrExpire = true;
           calculateTime(startTime!, checkInTimeForCal!);
           showScanSuccessDialog(context);
@@ -240,6 +254,35 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
           title: const Text('แจ้งเตือน!'),
           //content: Text('ค่าที่ได้: $scannedData'),
           content: const Text('คุณไม่ได้ลงทะเบียนเรียนรายวิชานี้'),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                controller!.pauseCamera();
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return const homeScreenForStudent();
+                    },
+                  ),
+                );
+              },
+              child: const Text('ตกลง'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showUserAleadyScannedDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('แจ้งเตือน!'),
+          //content: Text('ค่าที่ได้: $scannedData'),
+          content: const Text('สัปดาห์นี้คุณได้ทำการสแกนไปแล้ว'),
           actions: [
             TextButton(
               onPressed: () async {

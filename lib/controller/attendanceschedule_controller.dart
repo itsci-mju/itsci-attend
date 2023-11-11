@@ -92,4 +92,15 @@ class AttendanceScheduleController {
     print(response.body);
     return response;
   }
+
+  Future getAttendanceRecord(String regId, String weekNo) async {
+    var url = Uri.parse(
+        baseURL + '/attendanceschedule/checkscanned/' + regId + '/' + weekNo);
+    http.Response response = await http.get(url);
+    final utf8Body = utf8.decode(response.bodyBytes);
+    var jsonResponse = json.decode(utf8Body);
+    AttendanceSchedule attendanceSchedule =
+        AttendanceSchedule.formJsonToAttendanceSchedule(jsonResponse);
+    return attendanceSchedule;
+  }
 }

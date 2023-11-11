@@ -272,6 +272,7 @@ class _ListSubjectStudentScreenState extends State<ListSubjectStudentScreen> {
                 ),
                 Expanded(
                   child: ListView(
+                    padding: const EdgeInsets.only(top: 10),
                     children: <Widget>[
                       Column(
                         children: [
