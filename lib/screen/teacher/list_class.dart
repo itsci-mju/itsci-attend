@@ -391,17 +391,20 @@ class _ListClassTeacherScreenState extends State<ListClassTeacherScreen> {
                                                           ),
                                                         ),
                                                         onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pushReplacement(
-                                                                  MaterialPageRoute(builder:
-                                                                      (BuildContext
-                                                                          context) {
-                                                            return TeacherGenerateQR(
-                                                                sectionId: data[
-                                                                            index]
-                                                                        ['id']
-                                                                    .toString());
-                                                          }));
+                                                          Navigator
+                                                              .pushAndRemoveUntil(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder:
+                                                                    (context) {
+                                                              return TeacherGenerateQR(
+                                                                  sectionId: data[
+                                                                              index]
+                                                                          ['id']
+                                                                      .toString());
+                                                            }),
+                                                            (route) => false,
+                                                          );
                                                         },
                                                         child: Row(
                                                           mainAxisAlignment:
@@ -441,17 +444,20 @@ class _ListClassTeacherScreenState extends State<ListClassTeacherScreen> {
                                                           ),
                                                         ),
                                                         onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pushReplacement(
-                                                                  MaterialPageRoute(builder:
-                                                                      (BuildContext
-                                                                          context) {
-                                                            return AttendanceTeacherScreen(
-                                                                sectionId: data[
-                                                                            index]
-                                                                        ['id']
-                                                                    .toString());
-                                                          }));
+                                                          Navigator
+                                                              .pushAndRemoveUntil(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder:
+                                                                    (context) {
+                                                              return AttendanceTeacherScreen(
+                                                                  sectionId: data[
+                                                                              index]
+                                                                          ['id']
+                                                                      .toString());
+                                                            }),
+                                                            (route) => false,
+                                                          );
                                                         },
                                                         child: Row(
                                                           mainAxisAlignment:

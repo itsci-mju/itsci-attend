@@ -61,10 +61,10 @@ class _EditStudentPasswordState extends State<EditStudentPassword> {
       barrierDismissible: false,
       onConfirmBtnTap: () {
         // ทำการนำทางไปยังหน้าใหม่ที่คุณต้องการ
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => const DetailStudentProfile(),
-          ),
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const DetailStudentProfile()),
+          (route) => false,
         );
       },
     );
@@ -190,6 +190,9 @@ class _EditStudentPasswordState extends State<EditStudentPassword> {
                                   return "กรุณากรอกรหัสผ่านใหม่*";
                                 } else if (!subjectNameValid) {
                                   return "กรุณากรอกรหัสผ่านเป็นภาษาอังกฤษอักษรพิเศษ\nและตัวเลขความยาว 8-16 ตัว";
+                                } else if (newPasswordController.text ==
+                                    oldPasswordController.text) {
+                                  return "รหัสผ่านใหม่ต้องไม่เหมือนรหัสผ่านเดิม!!";
                                 }
                               },
                             ),

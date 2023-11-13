@@ -187,13 +187,6 @@ class _loginScreenState extends State<LoginScreen> {
                           onTap: () async {
                             if (usernameController.text == "root" &&
                                 passworldController.text == "1234") {
-                              //SharedPreferences prefs = await SharedPreferences.getInstance();
-                              //prefs.setString('username', usernameController.text);
-                              /*Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                      builder: (BuildContext context) {
-                                return const ListRoomScreen();
-                              }));*/
                             } else if (_formfield.currentState!.validate()) {
                               http.Response response =
                                   await loginController.doLogin(
@@ -211,17 +204,21 @@ class _loginScreenState extends State<LoginScreen> {
                                 List<dynamic> roles = jsonResponse['role'];
                                 roleName = roles[0]['role'];
                                 if (roleName == "Student") {
-                                  Navigator.of(context).pushReplacement(
-                                      MaterialPageRoute(
-                                          builder: (BuildContext context) {
-                                    return const homeScreenForStudent();
-                                  }));
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const homeScreenForStudent()),
+                                    (route) => false,
+                                  );
                                 } else if (roleName == "Teacher") {
-                                  Navigator.of(context).pushReplacement(
-                                      MaterialPageRoute(
-                                          builder: (BuildContext context) {
-                                    return const ListClassTeacherScreen();
-                                  }));
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ListClassTeacherScreen()),
+                                    (route) => false,
+                                  );
                                 }
                               } else if (response.statusCode == 409) {
                                 showLoginFailAlert();

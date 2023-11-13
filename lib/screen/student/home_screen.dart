@@ -92,14 +92,11 @@ class _homeScreenForStudentState extends State<homeScreenForStudent> {
                   color: maincolor,
                   child: InkWell(
                     onTap: () {
-                      // ทำการนำไปยังหน้าอื่น ในกรณีนี้คุณสามารถใช้ pushReplacement หรือ push ไปยังหน้าที่คุณต้องการ
-                      Navigator.of(context).pushReplacement(
+                      Navigator.pushAndRemoveUntil(
+                        context,
                         MaterialPageRoute(
-                          builder: (BuildContext context) {
-                            // ตรงนี้คุณสามารถกำหนดหน้าที่คุณต้องการแสดงหรือนำไปยังหน้าอื่น
-                            return const scanScreenForStudent();
-                          },
-                        ),
+                            builder: (context) => const scanScreenForStudent()),
+                        (route) => false,
                       );
                     },
                     child: FractionallySizedBox(
@@ -155,10 +152,13 @@ class _homeScreenForStudentState extends State<homeScreenForStudent> {
                   color: maincolor,
                   child: InkWell(
                     onTap: () {
-                      Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (BuildContext context) {
-                        return const ListSubjectStudentScreen();
-                      }));
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const ListSubjectStudentScreen()),
+                        (route) => false,
+                      );
                     },
                     child: FractionallySizedBox(
                       widthFactor: 1.0, // ให้เท่ากับความกว้างของ Container

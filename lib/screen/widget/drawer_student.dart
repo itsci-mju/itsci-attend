@@ -84,10 +84,12 @@ class _DrawerStudentWidgettState extends State<DrawerStudentWidget> {
               title:
                   const Text('หน้าหลัก', style: TextStyle(color: Colors.white)),
               onTap: () {
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (BuildContext context) {
-                  return const homeScreenForStudent();
-                }));
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const homeScreenForStudent()),
+                  (route) => false,
+                );
               },
             ),
             ListTile(
@@ -100,10 +102,12 @@ class _DrawerStudentWidgettState extends State<DrawerStudentWidget> {
               title: const Text('สแกนคิวอาร์โค้ด',
                   style: TextStyle(color: Colors.white)),
               onTap: () {
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (BuildContext context) {
-                  return const scanScreenForStudent();
-                }));
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const scanScreenForStudent()),
+                  (route) => false,
+                );
               },
             ),
             ListTile(
@@ -116,10 +120,12 @@ class _DrawerStudentWidgettState extends State<DrawerStudentWidget> {
               title: const Text('คลาสเรียน',
                   style: TextStyle(color: Colors.white)),
               onTap: () {
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (BuildContext context) {
-                  return const ListSubjectStudentScreen();
-                }));
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ListSubjectStudentScreen()),
+                  (route) => false,
+                );
               },
             ),
             ListTile(
@@ -134,10 +140,12 @@ class _DrawerStudentWidgettState extends State<DrawerStudentWidget> {
                 style: TextStyle(color: Colors.white),
               ),
               onTap: () {
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (BuildContext context) {
-                  return const DetailStudentProfile();
-                }));
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const DetailStudentProfile()),
+                  (route) => false,
+                );
               },
             ),
             ListTile(
@@ -152,10 +160,11 @@ class _DrawerStudentWidgettState extends State<DrawerStudentWidget> {
               onTap: () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 prefs.remove('username');
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (BuildContext context) {
-                  return const LoginScreen();
-                }));
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  (route) => false,
+                );
               },
             )
           ],

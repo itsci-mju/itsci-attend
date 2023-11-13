@@ -82,10 +82,12 @@ class _DrawerTeacherWidgetState extends State<DrawerTeacherWidget> {
               title: const Text('คลาสเรียน',
                   style: TextStyle(color: Colors.white)),
               onTap: () {
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (BuildContext context) {
-                  return const ListClassTeacherScreen();
-                }));
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ListClassTeacherScreen()),
+                  (route) => false,
+                );
               },
             ),
             ListTile(
@@ -100,10 +102,12 @@ class _DrawerTeacherWidgetState extends State<DrawerTeacherWidget> {
                 style: TextStyle(color: Colors.white),
               ),
               onTap: () {
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (BuildContext context) {
-                  return const DetailTeacherProfile();
-                }));
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const DetailTeacherProfile()),
+                  (route) => false,
+                );
               },
             ),
             ListTile(
@@ -118,10 +122,11 @@ class _DrawerTeacherWidgetState extends State<DrawerTeacherWidget> {
               onTap: () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 prefs.remove('username');
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (BuildContext context) {
-                  return const LoginScreen();
-                }));
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  (route) => false,
+                );
               },
             )
           ],

@@ -291,13 +291,15 @@ class _ListSubjectStudentScreenState extends State<ListSubjectStudentScreen> {
                                     //print(item['id'].toString());
                                     await Future.delayed(Duration
                                         .zero); // รอเวลาเล็กน้อยก่อนไปหน้า DetailRoomScreen
-                                    Navigator.of(context).pushReplacement(
-                                        MaterialPageRoute(
-                                            builder: (BuildContext context) {
-                                      return AttendanceStudentScreen(
-                                        regId: item['id'].toString(),
-                                      );
-                                    }));
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(builder: (context) {
+                                        return AttendanceStudentScreen(
+                                          regId: item['id'].toString(),
+                                        );
+                                      }),
+                                      (route) => false,
+                                    );
                                   },
                                   child: Align(
                                     alignment: Alignment.center,

@@ -33,6 +33,8 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
   final AttendanceScheduleController attendanceScheduleController =
       AttendanceScheduleController();
   bool? isLoaded = false;
+  bool shouldStopScanning = false;
+  bool? checkScanAleady = false;
   Barcode? result;
   QRViewController? controller;
   String? scannedData;
@@ -143,15 +145,6 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
     print("TestStatus ${status}");*/
   }
 
-  Future<bool> isUserAlreadyScanned(String regId, String weekNo) async {
-    // สอบถามรายการเช็คชื่อเพื่อตรวจสอบว่าผู้ใช้ได้ถูกสแกนไปแล้วสำหรับ regId และ weekNo ที่ระบุ
-    // คุณสามารถใช้ attendanceScheduleController เพื่อสอบถามรายการ
-    // หากมีรายการอยู่ ให้ส่งค่าเป็น true; มิฉะนั้นส่งค่าเป็น false
-    AttendanceSchedule? existingRecord =
-        await attendanceScheduleController.getAttendanceRecord(regId, weekNo);
-    return existingRecord != null;
-  }
-
   void qrCheckExpire(String dateGenQR, String checkInDate, String timeGenQR,
       String checkInTime, String timeLimit) {
     List<String> timeGenQRTrim = timeGenQR.split('-');
@@ -178,32 +171,71 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
     print("TestStatus ${status}");*/
   }
 
+  Future<void> isUserAlreadyScanned(String regId, String weekNo) {
+    return attendanceScheduleController.getAttendanceRecord(regId, weekNo).then(
+      (existingRecord) {
+        checkScanAleady = existingRecord != null;
+      },
+    );
+  }
+
   void onQRViewCamera(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) async {
+      if (shouldStopScanning) {
+        return;
+      }
       setState(() {
         result = scanData;
         scannedData =
             result != null ? result!.code : null; // ดึงข้อมูลจาก result
       });
-      splitData(scanData.code.toString());
-      if (scannedData != null && regId != null) {
-        if (await isUserAlreadyScanned(regId!, weekNo!)) {
-          showUserAleadyScannedDialog(
-              context); // ผู้ใช้ถูกสแกนไปแล้ว แสดงไดอะล็อก
-        } else if (qrExpire == false) {
-          qrExpire = true;
-          calculateTime(startTime!, checkInTimeForCal!);
-          showScanSuccessDialog(context);
+
+      if (scannedData != null) {
+        splitData(scanData.code.toString());
+        try {
+          final registration = await registrationController
+              .get_RegistrationIdBySectionIdandIdUser(sectionId!, IdUser!);
+          reg = registration;
+          regId = reg?.id.toString();
+        } catch (e) {
+          showScanUserNotInSectionDialog(context);
+          shouldStopScanning = true;
+        }
+
+        if (regId != null) {
+          if (qrExpire == false) {
+            qrExpire = true;
+            isUserAlreadyScanned(regId!, weekNo!);
+
+            try {
+              await isUserAlreadyScanned(regId!, weekNo!);
+
+              // ถ้าไม่เกิด error หรือ exception ในการเรียก isUserAlreadyScanned
+              // คุณสามารถดำเนินการต่อได้ทันที
+              if (checkScanAleady == true) {
+                showUserAleadyScannedDialog(context);
+                shouldStopScanning = true;
+              }
+            } catch (e) {
+              // กรณีเกิด error หรือ exception
+              // คุณสามารถตัดสินใจทำอะไรต่อไปได้, อย่างในกรณีที่ไม่มีข้อมูลที่ต้องการ
+              calculateTime(startTime!, checkInTimeForCal!);
+              showScanSuccessDialog(context);
+              shouldStopScanning = true;
+            }
+          } else {
+            showQRCodeExpireDialog(context);
+            shouldStopScanning = true;
+          }
         } else {
-          showQRCodeExpireDialog(context);
+          showScanUserNotInSectionDialog(context);
+          shouldStopScanning = true;
         }
       } else {
         showScanUserNotInSectionDialog(context);
+        shouldStopScanning = true;
       }
-      reg = await registrationController.get_RegistrationIdBySectionIdandIdUser(
-          sectionId!, IdUser!);
-      regId = reg!.id.toString();
     });
   }
 
@@ -228,13 +260,11 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
                           checkInTime.toString(),
                           status.toString());
                   if (response.statusCode == 200) {
-                    print("บันทึกการเข้าเรียนสำเร็จ");
-                    Navigator.of(context).pushReplacement(
+                    Navigator.pushAndRemoveUntil(
+                      context,
                       MaterialPageRoute(
-                        builder: (BuildContext context) {
-                          return const homeScreenForStudent();
-                        },
-                      ),
+                          builder: (context) => const homeScreenForStudent()),
+                      (route) => false,
                     );
                   }
                 },
@@ -258,12 +288,11 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
             TextButton(
               onPressed: () async {
                 controller!.pauseCamera();
-                Navigator.of(context).pushReplacement(
+                Navigator.pushAndRemoveUntil(
+                  context,
                   MaterialPageRoute(
-                    builder: (BuildContext context) {
-                      return const homeScreenForStudent();
-                    },
-                  ),
+                      builder: (context) => const homeScreenForStudent()),
+                  (route) => false,
                 );
               },
               child: const Text('ตกลง'),
@@ -287,12 +316,11 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
             TextButton(
               onPressed: () async {
                 controller!.pauseCamera();
-                Navigator.of(context).pushReplacement(
+                Navigator.pushAndRemoveUntil(
+                  context,
                   MaterialPageRoute(
-                    builder: (BuildContext context) {
-                      return const homeScreenForStudent();
-                    },
-                  ),
+                      builder: (context) => const homeScreenForStudent()),
+                  (route) => false,
                 );
               },
               child: const Text('ตกลง'),
@@ -315,12 +343,11 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
             TextButton(
               onPressed: () async {
                 controller!.pauseCamera();
-                Navigator.of(context).pushReplacement(
+                Navigator.pushAndRemoveUntil(
+                  context,
                   MaterialPageRoute(
-                    builder: (BuildContext context) {
-                      return const homeScreenForStudent();
-                    },
-                  ),
+                      builder: (context) => const homeScreenForStudent()),
+                  (route) => false,
                 );
               },
               child: const Text('ตกลง'),
@@ -404,13 +431,12 @@ class _scanScreenForStudentState extends State<scanScreenForStudent> {
                         ),
                       ),
                       onPressed: () {
-                        Navigator.of(context).pushReplacement(
+                        Navigator.pushAndRemoveUntil(
+                          context,
                           MaterialPageRoute(
-                            builder: (BuildContext context) {
-                              // ตรงนี้คุณสามารถกำหนดหน้าที่คุณต้องการแสดงหรือนำไปยังหน้าอื่น
-                              return const homeScreenForStudent();
-                            },
-                          ),
+                              builder: (context) =>
+                                  const homeScreenForStudent()),
+                          (route) => false,
                         );
                       },
                       child: const Text('กลับไปหน้าหลัก'),

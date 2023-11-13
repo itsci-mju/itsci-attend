@@ -270,11 +270,13 @@ class _TeacherGenerateQRState extends State<TeacherGenerateQR> {
                         onPressed: () async {
                           await Future.delayed(Duration
                               .zero); // รอเวลาเล็กน้อยก่อนไปหน้า DetailRoomScreen
-                          Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) {
-                            return const ListClassTeacherScreen();
-                          }));
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const ListClassTeacherScreen()),
+                            (route) => false,
+                          );
                         },
                         child: const Text("กลับหน้ารายวิชา",
                             style: CustomTextStyle.TextGeneral),
